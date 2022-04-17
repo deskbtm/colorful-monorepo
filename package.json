@@ -1,10 +1,21 @@
 {
 	"name": "colorful-monorepo",
-	"displayName": "Colorful Monorepo",
-	"description": "The vscode extension that creates colorful monorepo",
+	"displayName": "Colorful Monorepo - javascript, typescript, npm, yarn, pnpm, rush, nodejs",
+	"description": "A super amazing monorepo helper",
 	"version": "0.0.1",
 	"license": "AGPL-3.0",
 	"publisher": "HanWang",
+	"author": {
+		"email": "deskbtm@outlook.com",
+		"name": "HanWang"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/deskbtm/colorful-monorepo.git"
+	},
+	"workspaces": [
+		"./workspace-tools"
+	],
 	"icon": "logo.png",
 	"engines": {
 		"vscode": "^1.66.0"
@@ -17,64 +28,112 @@
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
+		"views": {
+			"explorer": [
+				{
+					"id": "drawer",
+					"name": "Drawer"
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.select",
-				"title": "Colorful Monorepo: Select Workspace Packages"
+				"title": "Monorepo: Select Workspace Packages",
+				"icon": {
+					"dark": "./assets/select_dark.svg",
+					"light": "./assets/select_light.svg"
+				}
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.npm.run-scripts",
+				"title": "Monorepo: Run Scripts",
+				"icon": {
+					"dark": "./assets/select_dark.svg",
+					"light": "./assets/select_light.svg"
+				}
 			}
 		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.select",
+					"when": "view == workbench.explorer.fileView",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.select",
+					"when": "view == workbench.explorer.fileView",
+					"group": "inline"
+				}
+			]
+		},
 		"configuration": {
-			"title": "Colorful Monorepo",
+			"title": "Monorepo",
 			"properties": {
 				"ColorfulMonorepo.includeRoot": {
 					"type": "boolean",
 					"default": true,
 					"description": "Include the monorepo root path as a workspace"
 				},
-				"ColorfulMonorepo.packages.regex.apps": {
+				"ColorfulMonorepo.workspaces.regex.apps": {
 					"type": "string",
 					"default": "^app|web|api|frontend|backend|package",
-					"description": "Regex to match app-like package paths"
+					"description": "Match the app-like packages"
 				},
-				"ColorfulMonorepo.packages.prefix.apps": {
+				"ColorfulMonorepo.workspaces.prefix.apps": {
 					"type": "string",
-					"default": "🌵 ",
+					"default": "🍀 ",
 					"description": "Folder prefix for apps"
 				},
-				"ColorfulMonorepo.packages.regex.libs": {
+				"ColorfulMonorepo.workspaces.regex.libs": {
 					"type": "string",
 					"default": "^common|lib|private|first_party|third_party",
-					"description": "Regex to match library-like package paths"
+					"description": "Match library-like packages"
 				},
-				"ColorfulMonorepo.packages.prefix.libs": {
+				"ColorfulMonorepo.workspaces.prefix.libs": {
 					"type": "string",
 					"default": "📦 ",
 					"description": "Folder prefix for libraries"
 				},
-				"ColorfulMonorepo.packages.regex.tools": {
+				"ColorfulMonorepo.workspaces.regex.docs": {
 					"type": "string",
-					"default": "^tool|script|util",
+					"default": "^doc|site",
 					"description": "Regex to match tool-like package paths"
 				},
-				"ColorfulMonorepo.packages.prefix.tools": {
+				"ColorfulMonorepo.workspaces.prefix.docs": {
 					"type": "string",
-					"default": "⚙️",
+					"default": "📄 ",
 					"description": "Folder prefix for tools"
 				},
-				"ColorfulMonorepo.packages.prefix.unknown": {
+				"ColorfulMonorepo.workspaces.prefix.unknown": {
 					"type": "string",
-					"default": "🥛 ",
+					"default": "❔ ",
 					"description": "Folder prefix for unknown packages"
 				},
-				"ColorfulMonorepo.packages.prefix.root": {
+				"ColorfulMonorepo.workspaces.prefix.root": {
 					"type": "string",
 					"default": "🌱 ",
 					"description": "Folder prefix for the root folder"
 				},
-				"ColorfulMonorepo.packages.custom": {
+				"ColorfulMonorepo.workspaces.custom": {
 					"type": "array",
 					"default": [],
-					"description": "An array of custom 'regex/prefix' pairs like: [{regex:'foo', prefix:'bar'}, {regex:'fffoo', prefix:'bbbar'}]"
+					"description": "Custom workspace prefix icon e.g [{regex:'foo', prefix:'bar'}, {regex:'fffoo', prefix:'bbbar'}]"
+				},
+				"ColorfulMonorepo.workspaces.collection": {
+					"type": "array",
+					"default": [],
+					"description": "Save the workspaces info"
+				},
+				"ColorfulMonorepo.drawer.include": {
+					"type": "array",
+					"default": [
+						"^node_module|dist|build"
+					],
+					"description": "The files dose not change frequently will move to Drawer"
 				}
 			}
 		}
@@ -84,7 +143,7 @@
 		"compile": "webpack",
 		"build": "cross-env NODE_ENV=production webpack",
 		"watch": "webpack --watch",
-		"package": "webpack --mode production --devtool hidden-source-map",
+		"package": "rimraf dist && cross-env NODE_ENV=production webpack --mode production",
 		"compile-tests": "tsc -p . --outDir out",
 		"watch-tests": "tsc -p . -w --outDir out",
 		"pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
@@ -103,13 +162,13 @@
 		"eslint": "^8.11.0",
 		"glob": "^7.2.0",
 		"mocha": "^9.2.2",
+		"rimraf": "^3.0.2",
 		"ts-loader": "^9.2.8",
 		"typescript": "^4.5.5",
 		"webpack": "^5.72.0",
 		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
-		"@deskbtm/workspace-tools": "link:../workspace-tools",
-		"workspace-tools": "^0.18.3"
+		"@deskbtm/workspace-tools": "link:workspace-tools"
 	}
 }

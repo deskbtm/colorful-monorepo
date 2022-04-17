@@ -1,5 +1,15 @@
-import { workspace, WorkspaceConfiguration } from "vscode";
+import { glob } from "glob";
+import { isAbsolute, normalize, relative } from "path";
+import { ConfigurationTarget, workspace } from "vscode";
+import { promisify } from "util";
 
+export const globAsync = promisify(glob);
+
+/**
+ *
+ * @param {String} [name="ColorfulMonorepo"] default "ColorfulMonorepo"
+ * @returns
+ */
 export const getExtensionConfig = function (name = "ColorfulMonorepo") {
   return workspace.getConfiguration(name);
 };
@@ -9,8 +19,9 @@ export const getExtensionCwd = function () {
   return workspace.workspaceFolders?.[0].uri.fsPath;
 };
 
+// match emojis from settings
 export const matchEmoji = function (relative: string, isRoot = false) {
-  const config = getExtensionConfig("ColorfulMonorepo.packages");
+  const config = getExtensionConfig("ColorfulMonorepo.workspaces");
 
   if (!config) {
     return;
@@ -21,6 +32,7 @@ export const matchEmoji = function (relative: string, isRoot = false) {
   }
 
   const custom = config.get<{ regex: string; prefix: string }[]>("custom");
+
   if (custom?.length) {
     for (const c of custom) {
       if (c.prefix && c.regex && new RegExp(c.regex, "u").test(relative)) {
@@ -29,7 +41,7 @@ export const matchEmoji = function (relative: string, isRoot = false) {
     }
   }
 
-  for (const k of ["apps", "libs", "tools"]) {
+  for (const k of ["apps", "libs", "docs"]) {
     const regex = config.get<string>(`regex.${k}`);
     const prefix = config.get<string>(`prefix.${k}`);
 
@@ -38,4 +50,69 @@ export const matchEmoji = function (relative: string, isRoot = false) {
     }
   }
   return config.get<string>("prefix.unknown");
+};
+
+export const switchExperimentalFileNesting = function (enable?: boolean) {
+  const explorerConfig = getExtensionConfig("explorer");
+  const nestEnabled = explorerConfig.get("experimental.fileNesting.enabled");
+
+  if (nestEnabled === undefined) {
+    return;
+  }
+
+  if (enable !== nestEnabled) {
+    explorerConfig.update(
+      "experimental.fileNesting.enabled",
+      enable,
+      ConfigurationTarget.Workspace
+    );
+  }
+};
+
+export const randomColor = function () {
+  var color = Math.floor(Math.random() * 16777215).toString(16);
+  return "#" + ("000000" + color).slice(-6);
+};
+
+export const hex2RGB = function (hex: string) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null;
+};
+
+export const invertHexColor = function (hex: string) {
+  let rgb = hex2RGB(hex);
+  let luminance =
+    rgb && 0.2126 * rgb["r"] + 0.7152 * rgb["g"] + 0.0722 * rgb["b"];
+  return luminance && luminance < 140 ? "#ffffff" : "#000000";
+};
+
+export const autoGenerateColor = function () {
+  const background = randomColor();
+  const foreground = invertHexColor(background);
+  return {
+    background,
+    foreground,
+  };
+};
+
+/**
+ *
+ * @example
+ * ```
+ * isWithin('/foo', '/foo/bar') === true
+ * isWithin('/foo', '/foo') === false
+ *
+ * ```
+ */
+export const isWithin = function (parent: string, child: string) {
+  parent = normalize(parent);
+  child = normalize(child);
+  const r = relative(parent, child);
+  return !isAbsolute(r) && !r.startsWith("..");
 };

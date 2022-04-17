@@ -1,0 +1,3 @@
+[submodule "workspace-tools"]
+	path = workspace-tools
+	url = https://github.com/deskbtm/workspace-tools.git

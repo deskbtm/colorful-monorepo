@@ -1,3 +1,4 @@
+import { DrawerProvider } from "./drawer/drawer-provider";
 /**
  * Copyright (C) 2022 WangHan
  *
@@ -17,18 +18,29 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from "vscode";
-import { getAllPackages, selectWorkspacePackages } from "./workspace";
+import { commands, ExtensionContext, window, workspace } from "vscode";
+import { colorizeHandler } from "./colorize";
+import { getExtensionCwd, switchExperimentalFileNesting } from "./utils";
+import { selectWorkspacePackages } from "./workspace";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-  let selectPackages = vscode.commands.registerCommand(
+export function activate(context: ExtensionContext) {
+  // 此处强制开启实验性的 file nesting
+  switchExperimentalFileNesting(true);
+
+  const cwd = getExtensionCwd();
+
+  if (cwd) {
+    window.registerTreeDataProvider("drawer", new DrawerProvider(cwd));
+  }
+
+  let selectPackages = commands.registerCommand(
     "com.deskbtm.ColorfulMonorepo.select",
     selectWorkspacePackages
   );
 
-  context.subscriptions.push(selectPackages);
+  context.subscriptions.push(selectPackages, colorizeHandler);
 }
 
 // this method is called when your extension is deactivated

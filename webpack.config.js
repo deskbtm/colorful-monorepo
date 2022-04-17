@@ -45,7 +45,7 @@ const extensionConfig = {
       },
     ],
   },
-  devtool: "nosources-source-map",
+  devtool: ENV === "production" ? false : "nosources-source-map",
   infrastructureLogging: {
     level: "log", // enables logging required for problem matchers
   },
