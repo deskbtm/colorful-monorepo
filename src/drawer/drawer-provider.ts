@@ -11,7 +11,6 @@ import {
   FileSystemWatcher,
   RelativePattern,
   FileType,
-  Uri,
 } from "vscode";
 
 type DrawerItem = WorkspaceItem | FileItem;
@@ -53,50 +52,33 @@ export class DrawerProvider
         const config = getExtensionConfig("files");
         const exclude = config.get<Record<string, boolean>>("exclude");
 
-        if (element.resourceUri) {
-          const files = await workspace.fs.readDirectory(element.resourceUri);
-          const fileList = humanFileList(element.resourceUri, files);
+        const folder = folders.find((v) => v.name === element.label);
 
-          const items: any = [];
-
-          for (const f of fileList) {
-            items.push(
-              new FileItem(
-                f.uri,
-                f.type === FileType.Directory
-                  ? TreeItemCollapsibleState.Collapsed
-                  : TreeItemCollapsibleState.None
-              )
-            );
-          }
-
-          resolve(items);
-        } else {
-          const folder = folders.find((v) => v.name === element.label);
-
-          if (!folder) {
-            reject([]);
-            return;
-          }
-
-          const files = await workspace.fs.readDirectory(folder.uri);
-          const fileList = humanFileList(folder.uri, files);
-
-          const items: any = [];
-
-          for (const f of fileList) {
-            items.push(
-              new FileItem(
-                f.uri,
-                f.type === FileType.Directory
-                  ? TreeItemCollapsibleState.Collapsed
-                  : TreeItemCollapsibleState.None
-              )
-            );
-          }
-
-          resolve(items);
+        if (!folder) {
+          reject([]);
+          return;
         }
+
+        const files = await workspace.fs.readDirectory(
+          element.resourceUri ?? folder.uri
+        );
+
+        const fileList = humanFileList(folder.uri, files);
+
+        const items: FileItem[] = [];
+
+        for (const f of fileList) {
+          items.push(
+            new FileItem(
+              f.uri,
+              f.type === FileType.Directory
+                ? TreeItemCollapsibleState.Collapsed
+                : TreeItemCollapsibleState.None
+            )
+          );
+        }
+
+        resolve(items);
       } else {
         const items = [];
 
