@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { glob } from "glob";
 import { isAbsolute, normalize, relative } from "path";
-import { ConfigurationTarget, workspace } from "vscode";
+import { ConfigurationTarget, FileType, Uri, workspace } from "vscode";
 import { promisify } from "util";
 
 export const globAsync = promisify(glob);
@@ -115,4 +116,47 @@ export const isWithin = function (parent: string, child: string) {
   child = normalize(child);
   const r = relative(parent, child);
   return !isAbsolute(r) && !r.startsWith("..");
+};
+
+export enum SortType {
+  KIND,
+  TIMESTAMP,
+}
+
+interface HumanFile {
+  name: string;
+  type: FileType;
+  uri: Uri;
+}
+
+/**
+ *
+ * convert {@link FileSystem.readDirectory} result readable
+ *
+ * @param base
+ * @param files
+ * @param sortType
+ */
+export const humanFileList = (
+  base: Uri,
+  files: [string, FileType][],
+  sortType: SortType = SortType.KIND
+): HumanFile[] => {
+  const fileList: HumanFile[] = [];
+  const folderList: HumanFile[] = [];
+
+  for (const f of files) {
+    const [name, type] = f;
+    const fo = { name, type, uri: Uri.joinPath(base, name) };
+    if (type === FileType.Directory) {
+      folderList.push(fo);
+    } else {
+      fileList.push(fo);
+    }
+  }
+
+  folderList.sort((p, n) => p.name.localeCompare(n.name));
+  fileList.sort((p, n) => p.name.localeCompare(n.name));
+
+  return folderList.concat(fileList);
 };

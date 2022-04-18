@@ -1,8 +1,6 @@
-import { getExtensionConfig } from "./../utils";
+import { getExtensionConfig, humanFileList } from "../utils";
 import { FileItem } from "./file-item";
 import { WorkspaceItem } from "./workspace-item";
-import * as fs from "fs";
-import * as path from "path";
 import {
   TreeDataProvider,
   workspace,
@@ -50,45 +48,61 @@ export class DrawerProvider
         reject([]);
         return;
       }
-      console.log(element);
+
       if (element) {
         const config = getExtensionConfig("files");
         const exclude = config.get<Record<string, boolean>>("exclude");
-        const folder = folders.find((v) => v.name === element.label);
 
-        if (!folder) {
-          reject([]);
-          return;
+        if (element.resourceUri) {
+          const files = await workspace.fs.readDirectory(element.resourceUri);
+          const fileList = humanFileList(element.resourceUri, files);
+
+          const items: any = [];
+
+          for (const f of fileList) {
+            items.push(
+              new FileItem(
+                f.uri,
+                f.type === FileType.Directory
+                  ? TreeItemCollapsibleState.Collapsed
+                  : TreeItemCollapsibleState.None
+              )
+            );
+          }
+
+          resolve(items);
+        } else {
+          const folder = folders.find((v) => v.name === element.label);
+
+          if (!folder) {
+            reject([]);
+            return;
+          }
+
+          const files = await workspace.fs.readDirectory(folder.uri);
+          const fileList = humanFileList(folder.uri, files);
+
+          const items: any = [];
+
+          for (const f of fileList) {
+            items.push(
+              new FileItem(
+                f.uri,
+                f.type === FileType.Directory
+                  ? TreeItemCollapsibleState.Collapsed
+                  : TreeItemCollapsibleState.None
+              )
+            );
+          }
+
+          resolve(items);
         }
-        const files = await workspace.fs.readDirectory(folder.uri);
-        const items = [];
-
-        for (const f of files) {
-          const [name, type] = f;
-
-          // Uri.joinPath();
-
-          items.push(
-            new WorkspaceItem(
-              name,
-              type === FileType.Directory
-                ? TreeItemCollapsibleState.Collapsed
-                : TreeItemCollapsibleState.None,
-              "",
-              folder.uri
-            )
-          );
-        }
-
-        resolve(items);
-
-        // console.log(Object.entries(config.get<any>("exclude")));
       } else {
         const items = [];
 
         for (const f of folders) {
           items.push(
-            new WorkspaceItem(f.name, TreeItemCollapsibleState.Collapsed, "")
+            new WorkspaceItem(f.name, TreeItemCollapsibleState.Collapsed)
           );
         }
 

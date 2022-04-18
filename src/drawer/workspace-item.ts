@@ -1,25 +1,16 @@
-import {
-  Command,
-  EventEmitter,
-  FileSystemWatcher,
-  TreeItem,
-  TreeItemCollapsibleState,
-  ThemeIcon,
-  Uri,
-} from "vscode";
+import { TreeItem, TreeItemCollapsibleState } from "vscode";
 
 export class WorkspaceItem extends TreeItem {
-  // override iconPath = ThemeIcon.Folder;
   override contextValue = "workspaceFolder";
-  public uri?: Uri;
 
   constructor(
     public override readonly label: string,
     public override readonly collapsibleState: TreeItemCollapsibleState,
-    public override readonly tooltip: string,
-    uri?: Uri // public override readonly command?: Command,
+    // public readonly uri: Uri,
+    public override readonly tooltip?: string
   ) {
     super(label, collapsibleState);
-    this.uri = uri;
   }
 }
+
+// public override readonly command?: Command,

@@ -8,13 +8,14 @@ import {
   Uri,
 } from "vscode";
 
-export class FileItem extends TreeItem {
+export class FolderItem extends TreeItem {
   constructor(
-    public override readonly resourceUri: Uri,
+    public override readonly label: string,
     public override readonly collapsibleState: TreeItemCollapsibleState,
-    public override readonly tooltip?: string
+    public readonly uri: Uri
   ) {
-    super(resourceUri, collapsibleState);
+    super(label, collapsibleState);
+    this.uri = uri;
   }
-  override contextValue = "fileItem";
+  override contextValue = "folderItem";
 }
