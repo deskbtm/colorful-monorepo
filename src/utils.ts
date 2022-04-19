@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { glob } from "glob";
-import { isAbsolute, normalize, relative } from "path";
+import { isAbsolute, join, normalize, relative } from "path";
 import { ConfigurationTarget, FileType, Uri, workspace } from "vscode";
 import { promisify } from "util";
+import { stat } from "fs/promises";
+import { Stats } from "fs";
 
 export const globAsync = promisify(glob);
 
@@ -129,6 +131,40 @@ interface HumanFile {
   uri: Uri;
 }
 
+interface FormattedFile {
+  name: string;
+  uri: Uri;
+  stat: Stats;
+  type: FileType;
+}
+
+export const getFiles = async (base: Uri, names: string[]) => {
+  return Promise.all(
+    names.map(async (n) => {
+      const path = join(base.fsPath, n);
+      const s = await stat(path);
+
+      let type: FileType;
+      if (s.isDirectory()) {
+        type = FileType.Directory;
+      } else if (s.isFile()) {
+        type = FileType.File;
+      } else if (s.isSymbolicLink()) {
+        type = FileType.SymbolicLink;
+      } else {
+        type = FileType.Unknown;
+      }
+
+      return {
+        name: n,
+        uri: Uri.file(path),
+        stat: s,
+        type,
+      };
+    })
+  );
+};
+
 /**
  *
  * convert {@link FileSystem.readDirectory} result readable
@@ -138,6 +174,27 @@ interface HumanFile {
  * @param sortType
  */
 export const humanFileList = (
+  files: FormattedFile[],
+  sortType: SortType = SortType.KIND
+): HumanFile[] => {
+  const fileList: HumanFile[] = [];
+  const folderList: HumanFile[] = [];
+
+  for (const f of files) {
+    if (f.type === FileType.Directory) {
+      folderList.push(f);
+    } else {
+      fileList.push(f);
+    }
+  }
+
+  folderList.sort((p, n) => p.name.localeCompare(n.name));
+  fileList.sort((p, n) => p.name.localeCompare(n.name));
+
+  return folderList.concat(fileList);
+};
+
+export const humanFileList1 = (
   base: Uri,
   files: [string, FileType][],
   sortType: SortType = SortType.KIND

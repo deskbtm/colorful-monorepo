@@ -1,18 +1,55 @@
-const glob = require("glob");
+const minimatch = require("minimatch");
+const micromatch = require("micromatch");
 
-glob(
-  "**/*.{js,ts}",
+const r = minimatch(
+  "C:\\Users\\Nawb\\Desktop\\Workspace\\colorful-monorepo\\node_modules",
+  "{**/.git,**/.svn,**/.hg,**/CVS,**/.DS_Store,**/Thumbs.db,**/node_modules,**/node_modules/*,**/.eslintignore,**/.editorconfig,**/.gitignore,**/.gitattributes,**/.github,**/.vscode,**/.yarn,**/.prettierrc,**/.eslintrc.js,**/key}",
   {
-    // ignore: [
-    //   "**/dist/*/**",
-    //   "**/build/*/**",
-    //   "**/node_modules/*/**",
-    //   "**/.git/objects/**",
-    //   "**/.git/subtree-cache/**",
-    //   "**/.hg/store/**",
-    // ],
-  },
-  (e, r) => {
-    console.log(r);
+    dot: true,
+    matchBase: true,
   }
+);
+console.log(r);
+
+console.log(
+  micromatch.isMatch(
+    "C:\\Users\\Nawb\\Desktop\\Workspace\\colorful-monorepo\\node_modules\\@babel",
+    [
+      "**/.git",
+      "**/.svn",
+      "**/.hg",
+      "**/CVS",
+      "**/.DS_Store",
+      "**/Thumbs.db",
+      "**/node_modules/*",
+      "**/node_modules",
+      "**/.eslintignore",
+      "**/.editorconfig",
+      "**/.gitignore",
+    ]
+  )
+);
+
+console.log(
+  micromatch.isMatch(
+    "C:\\Users\\Nawb\\Desktop\\Workspace\\colorful-monorepo\\node_modules\\@babel\\demo",
+    [
+      "**/.git",
+      "**/.svn",
+      "**/.hg",
+      "**/CVS",
+      "**/.DS_Store",
+      "**/Thumbs.db",
+      "**/node_modules/**/*",
+      "**/node_modules",
+      "**/.eslintignore",
+      "**/.editorconfig",
+      "**/.gitignore",
+    ],
+    {
+      ignore: [
+        // "C:\\Users\\Nawb\\Desktop\\Workspace\\colorful-monorepo\\node_modules\\@babel",
+      ],
+    }
+  )
 );

@@ -32,7 +32,19 @@ export function activate(context: ExtensionContext) {
   const cwd = getExtensionCwd();
 
   if (cwd) {
-    window.registerTreeDataProvider("drawer", new DrawerProvider(cwd));
+    const drawerProvider = new DrawerProvider(cwd);
+    // window.registerTreeDataProvider("drawer", drawerProvider);
+
+    window.createTreeView("drawer", {
+      treeDataProvider: new DrawerProvider(cwd),
+    });
+
+    commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.refresh",
+      () => {
+        drawerProvider.refresh();
+      }
+    );
   }
 
   let selectPackages = commands.registerCommand(
