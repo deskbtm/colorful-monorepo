@@ -24,7 +24,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"workspaceContains:**/package.json"
+		"workspaceContains:**/package.json",
+		"onView:drawer"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -53,6 +54,22 @@
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.refresh",
 				"title": "Monorepo Drawer: Refresh",
 				"icon": "$(refresh)"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.move2",
+				"title": "Monorepo: Move to drawer"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.move2Glob",
+				"title": "Monorepo: Move to drawer(glob)"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.show",
+				"title": "Show"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
+				"title": "Move out"
 			}
 		],
 		"menus": {
@@ -70,9 +87,25 @@
 			],
 			"view/item/context": [
 				{
-					"command": "com.deskbtm.ColorfulMonorepo.select",
-					"when": "view == workbench.explorer.fileView",
-					"group": "inline"
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
+					"when": "view == drawer && viewItem == fileItem"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.move2",
+					"when": "activeViewlet == workbench.view.explorer",
+					"group": "drawer"
+				},
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.move2Glob",
+					"when": "activeViewlet == workbench.view.explorer",
+					"group": "drawer"
+				},
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
+					"when": "activeViewlet == drawer",
+					"group": "drawer"
 				}
 			]
 		},
@@ -137,6 +170,11 @@
 				"ColorfulMonorepo.drawer.ignore": {
 					"type": "array",
 					"default": [],
+					"description": "The files dose not change frequently will move to Drawer"
+				},
+				"ColorfulMonorepo.colorize.enabled": {
+					"type": "boolean",
+					"default": true,
 					"description": "The files dose not change frequently will move to Drawer"
 				}
 			}

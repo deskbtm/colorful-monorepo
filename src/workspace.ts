@@ -6,7 +6,6 @@ import {
   ConfigurationTarget,
 } from "vscode";
 import {
-  getWorkspaceRoot,
   getWorkspaces,
   WorkspaceInfo,
 } from "@deskbtm/workspace-tools";
@@ -14,7 +13,6 @@ import {
   autoGenerateColor,
   getExtensionConfig,
   getExtensionCwd,
-  globAsync,
   matchEmoji,
 } from "./utils";
 import * as path from "path";

@@ -1,3 +1,4 @@
+import { TextItem } from "../component/empty-item";
 import { getExtensionConfig, humanFileList1 } from "../utils";
 import { FileItem } from "./file-item";
 import { WorkspaceItem } from "./workspace-item";
@@ -11,12 +12,11 @@ import {
   RelativePattern,
   FileType,
   Uri,
+  ThemeIcon,
 } from "vscode";
-import minimatch from "minimatch";
-import path from "path";
 import micromatch from "micromatch";
 
-type DrawerItem = WorkspaceItem | FileItem;
+type DrawerItem = WorkspaceItem | FileItem | TextItem;
 
 export class DrawerProvider
   extends EventEmitter<DrawerItem | undefined>
@@ -28,6 +28,7 @@ export class DrawerProvider
 
   constructor(private workspaceRoot: string) {
     super();
+
     workspace.workspaceFolders?.forEach((folder) => {
       this.#add2Watch(folder.uri);
     });
@@ -101,7 +102,7 @@ export class DrawerProvider
 
           const fileList = humanFileList1(folderUri, files);
 
-          const items: FileItem[] = [];
+          const items: DrawerItem[] = [];
 
           for (let f of fileList) {
             const r = micromatch.isMatch(f.uri.path, globs, {
@@ -115,11 +116,26 @@ export class DrawerProvider
                   f.uri,
                   f.type === FileType.Directory
                     ? TreeItemCollapsibleState.Collapsed
-                    : TreeItemCollapsibleState.None
+                    : TreeItemCollapsibleState.None,
+                  f.name,
+                  f.uri.fsPath,
+                  f.type === FileType.File || f.type === FileType.SymbolicLink
+                    ? {
+                        title: "Monorepo Drawer: Open File",
+                        command: "vscode.open",
+                        arguments: [f.uri],
+                        tooltip: `Click to open ${f.uri.fsPath}`,
+                      }
+                    : undefined
                 )
               );
             }
           }
+
+          if (items.length < 1) {
+            items.push(new TextItem("Empty", new ThemeIcon("warning")));
+          }
+
           resolve(items);
         } catch (error) {
           reject([]);
