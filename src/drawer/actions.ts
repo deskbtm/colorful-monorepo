@@ -1,7 +1,8 @@
 import { DrawerProvider } from "./drawer-provider";
-import { ConfigurationTarget, Uri } from "vscode";
+import { ConfigurationTarget, TreeItem, Uri } from "vscode";
 import { getExtensionConfig } from "../utils";
 import { FileItem } from "./file-item";
+import path from "path";
 
 export const moveOut = async function (
   item: FileItem,
@@ -30,7 +31,27 @@ export const moveOut = async function (
   }
 };
 
-export const toggleVisibility = function (item?: FileItem) {
+export const move2DrawerGlobHandler = async function (
+  item: Uri,
+  drawerProvider: DrawerProvider
+) {
+  const fileConfig = getExtensionConfig("files");
+  const exclude = fileConfig.get<Record<string, boolean>>("exclude") ?? {};
+
+  if (item) {
+    const basename = path.basename(item.fsPath);
+
+    exclude["**/" + basename] = true;
+
+    await fileConfig.update("exclude", exclude, ConfigurationTarget.Workspace);
+
+    drawerProvider.refresh();
+  }
+
+  // const fileGlob =
+};
+
+export const move2Drawer = function (item?: FileItem) {
   const fileConfig = getExtensionConfig("files");
   const exclude = fileConfig.get<Record<string, boolean>>("exclude") ?? {};
 };

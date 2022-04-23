@@ -22,7 +22,9 @@ export const getExtensionCwd = function () {
   return workspace.workspaceFolders?.[0].uri.fsPath;
 };
 
-// match emojis from settings
+/**
+ * match emojis from settings
+ */
 export const matchEmoji = function (relative: string, isRoot = false) {
   const config = getExtensionConfig("ColorfulMonorepo.workspaces");
 
@@ -173,10 +175,7 @@ export const getFiles = async (base: Uri, names: string[]) => {
  * @param files
  * @param sortType
  */
-export const humanFileList = (
-  files: FormattedFile[],
-  sortType: SortType = SortType.KIND
-): HumanFile[] => {
+export const humanFileList = (files: FormattedFile[]): HumanFile[] => {
   const fileList: HumanFile[] = [];
   const folderList: HumanFile[] = [];
 
@@ -196,8 +195,7 @@ export const humanFileList = (
 
 export const humanFileList1 = (
   base: Uri,
-  files: [string, FileType][],
-  sortType: SortType = SortType.KIND
+  files: [string, FileType][]
 ): HumanFile[] => {
   const fileList: HumanFile[] = [];
   const folderList: HumanFile[] = [];

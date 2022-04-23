@@ -5,7 +5,6 @@
 const path = require("path");
 
 const ENV = process.env.NODE_ENV;
-
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
 /** @type WebpackConfig */

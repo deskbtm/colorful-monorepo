@@ -5,16 +5,14 @@ import {
   workspace,
   ConfigurationTarget,
 } from "vscode";
-import {
-  getWorkspaces,
-  WorkspaceInfo,
-} from "@deskbtm/workspace-tools";
+import { getWorkspaces, WorkspaceInfo } from "@deskbtm/workspace-tools";
 import {
   autoGenerateColor,
   getExtensionConfig,
   getExtensionCwd,
   matchEmoji,
-} from "./utils";
+} from "../utils";
+import { DurableWorkspaceItem } from "../interface";
 import * as path from "path";
 
 type WorkspaceItem = WorkspaceInfo extends (infer T)[] ? T : [];
@@ -24,13 +22,6 @@ interface PackageItem extends QuickPickItem, WorkspaceItem {
   relative: string;
   uri: Uri;
   packageName: string;
-}
-export interface DurableWorkspaceItem {
-  path: string;
-  label: string;
-  packageName: string;
-  background: string;
-  foreground: string;
 }
 
 interface GetAllPackagesOptions {

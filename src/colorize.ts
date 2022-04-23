@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { isWithin } from "./utils";
 import { window, ConfigurationTarget } from "vscode";
 import { getExtensionConfig } from "./utils";
-import { DurableWorkspaceItem } from "./workspace";
+import { DurableWorkspaceItem } from "./interface";
 
 export const colorizeHandler = window.onDidChangeActiveTextEditor(
   async (event) => {

@@ -70,6 +70,10 @@
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
 				"title": "Move out"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.arrange.auto",
+				"title": "Auto arrange"
 			}
 		],
 		"menus": {
@@ -176,6 +180,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "The files dose not change frequently will move to Drawer"
+				},
+				"ColorfulMonorepo.arrange.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Auto arrange the tab by workspace"
 				}
 			}
 		}
@@ -194,6 +203,7 @@
 	},
 	"devDependencies": {
 		"@types/glob": "^7.2.0",
+		"@types/lodash.debounce": "^4",
 		"@types/micromatch": "^4",
 		"@types/minimatch": "^3.0.5",
 		"@types/mocha": "^9.1.0",
@@ -214,7 +224,8 @@
 		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
-		"@deskbtm/workspace-tools": "link:workspace-tools",
+		"@deskbtm/workspace-tools": "link:./workspace-tools",
+		"lodash.debounce": "^4.0.8",
 		"minimatch": "^5.0.1"
 	}
 }
