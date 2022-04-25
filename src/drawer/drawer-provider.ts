@@ -1,5 +1,5 @@
 import { TextItem } from "../component/empty-item";
-import { getExtensionConfig, humanFileList1 } from "../utils";
+import { getExtensionConfig, humanFileList } from "../utils";
 import { FileItem } from "./file-item";
 import { WorkspaceItem } from "./workspace-item";
 import {
@@ -19,15 +19,18 @@ import micromatch from "micromatch";
 type DrawerItem = WorkspaceItem | FileItem | TextItem;
 
 export class DrawerProvider
-  extends EventEmitter<DrawerItem | undefined>
+  // extends EventEmitter<DrawerItem | undefined>
   implements TreeDataProvider<DrawerItem>
 {
   private watchers = new Map();
 
-  readonly onDidChangeTreeData = this.event;
+  private _onDidChangeTreeData: EventEmitter<DrawerItem | undefined> =
+    new EventEmitter<DrawerItem | undefined>();
+
+  readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   constructor(private workspaceRoot: string) {
-    super();
+    // super();
 
     workspace.workspaceFolders?.forEach((folder) => {
       this.#add2Watch(folder.uri);
@@ -45,7 +48,7 @@ export class DrawerProvider
   }
 
   public refresh(): void {
-    this.fire(undefined);
+    this._onDidChangeTreeData.fire(undefined);
   }
 
   #add2Watch(uri: Uri) {
@@ -100,7 +103,7 @@ export class DrawerProvider
 
           const files = await workspace.fs.readDirectory(folderUri);
 
-          const fileList = humanFileList1(folderUri, files);
+          const fileList = humanFileList(folderUri, files);
 
           const items: DrawerItem[] = [];
 

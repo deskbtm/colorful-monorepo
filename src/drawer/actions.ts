@@ -47,11 +47,4 @@ export const move2DrawerGlobHandler = async function (
 
     drawerProvider.refresh();
   }
-
-  // const fileGlob =
-};
-
-export const move2Drawer = function (item?: FileItem) {
-  const fileConfig = getExtensionConfig("files");
-  const exclude = fileConfig.get<Record<string, boolean>>("exclude") ?? {};
 };

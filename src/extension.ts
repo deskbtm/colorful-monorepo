@@ -55,6 +55,10 @@ export function activate(context: ExtensionContext) {
   const colorizeConfig = getExtensionConfig("ColorfulMonorepo.colorize");
   const arrangeConfig = getExtensionConfig("ColorfulMonorepo.arrange");
 
+  if (arrangeConfig.get<boolean>("enabled")) {
+    commands.executeCommand("workbench.explorer.openEditorsView.removeView");
+  }
+
   const drawerProvider = new DrawerProvider(cwd);
 
   window.createTreeView("drawer", {
@@ -66,13 +70,8 @@ export function activate(context: ExtensionContext) {
     () => drawerProvider.refresh()
   );
 
-  move2Drawer = commands.registerCommand(
-    "com.deskbtm.ColorfulMonorepo.drawer.move2",
-    (item) => {}
-  );
-
   move2DrawerByGlob = commands.registerCommand(
-    "com.deskbtm.ColorfulMonorepo.drawer.move2Glob",
+    "com.deskbtm.ColorfulMonorepo.drawer.move2",
     (item) => move2DrawerGlobHandler(item, drawerProvider)
   );
 
@@ -91,7 +90,6 @@ export function activate(context: ExtensionContext) {
   autoArrange = createAutoArrange(context);
 
   context.subscriptions.push(
-    move2Drawer,
     moveOutFromDrawer,
     drawerRefresh,
     move2DrawerByGlob,

@@ -4,10 +4,11 @@
 	"description": "A super amazing monorepo helper",
 	"version": "0.0.1",
 	"license": "AGPL-3.0",
-	"publisher": "HanWang",
+	"publisher": "WangHan",
+	"private": true,
 	"author": {
 		"email": "deskbtm@outlook.com",
-		"name": "HanWang"
+		"name": "WangHan"
 	},
 	"repository": {
 		"type": "git",
@@ -57,11 +58,7 @@
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.move2",
-				"title": "Monorepo: Move to drawer"
-			},
-			{
-				"command": "com.deskbtm.ColorfulMonorepo.drawer.move2Glob",
-				"title": "Monorepo: Move to drawer(glob)"
+				"title": "Monorepo: Move to drawer(Glob)"
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.show",
@@ -98,11 +95,6 @@
 			"explorer/context": [
 				{
 					"command": "com.deskbtm.ColorfulMonorepo.drawer.move2",
-					"when": "activeViewlet == workbench.view.explorer",
-					"group": "drawer"
-				},
-				{
-					"command": "com.deskbtm.ColorfulMonorepo.drawer.move2Glob",
 					"when": "activeViewlet == workbench.view.explorer",
 					"group": "drawer"
 				},
@@ -171,11 +163,6 @@
 					"default": [],
 					"description": "Save the workspaces info"
 				},
-				"ColorfulMonorepo.drawer.ignore": {
-					"type": "array",
-					"default": [],
-					"description": "The files dose not change frequently will move to Drawer"
-				},
 				"ColorfulMonorepo.colorize.enabled": {
 					"type": "boolean",
 					"default": true,
@@ -183,8 +170,13 @@
 				},
 				"ColorfulMonorepo.arrange.enabled": {
 					"type": "boolean",
-					"default": true,
-					"description": "Auto arrange the tab by workspace"
+					"default": false,
+					"description": "Enable auto arrange the editor by workspace"
+				},
+				"ColorfulMonorepo.arrange.init": {
+					"type": "boolean",
+					"default": false,
+					"description": "Workspace is initialized"
 				}
 			}
 		}

@@ -167,33 +167,33 @@ export const getFiles = async (base: Uri, names: string[]) => {
   );
 };
 
-/**
- *
- * convert {@link FileSystem.readDirectory} result readable
- *
- * @param base
- * @param files
- * @param sortType
- */
-export const humanFileList = (files: FormattedFile[]): HumanFile[] => {
-  const fileList: HumanFile[] = [];
-  const folderList: HumanFile[] = [];
+// /**
+//  *
+//  * convert {@link FileSystem.readDirectory} result readable
+//  *
+//  * @param base
+//  * @param files
+//  * @param sortType
+//  */
+// export const humanFileList = (files: FormattedFile[]): HumanFile[] => {
+//   const fileList: HumanFile[] = [];
+//   const folderList: HumanFile[] = [];
 
-  for (const f of files) {
-    if (f.type === FileType.Directory) {
-      folderList.push(f);
-    } else {
-      fileList.push(f);
-    }
-  }
+//   for (const f of files) {
+//     if (f.type === FileType.Directory) {
+//       folderList.push(f);
+//     } else {
+//       fileList.push(f);
+//     }
+//   }
 
-  folderList.sort((p, n) => p.name.localeCompare(n.name));
-  fileList.sort((p, n) => p.name.localeCompare(n.name));
+//   folderList.sort((p, n) => p.name.localeCompare(n.name));
+//   fileList.sort((p, n) => p.name.localeCompare(n.name));
 
-  return folderList.concat(fileList);
-};
+//   return folderList.concat(fileList);
+// };
 
-export const humanFileList1 = (
+export const humanFileList = (
   base: Uri,
   files: [string, FileType][]
 ): HumanFile[] => {
@@ -214,4 +214,34 @@ export const humanFileList1 = (
   fileList.sort((p, n) => p.name.localeCompare(n.name));
 
   return folderList.concat(fileList);
+};
+
+export const is = {
+  type(obj: unknown, str: string): boolean {
+    return Object.prototype.toString.call(obj) === `[object ${str}]`;
+  },
+  set(obj: unknown): obj is Set<any> {
+    return this.type(obj, "Set");
+  },
+  // object(obj: unknown): obj is object {
+  //   return this.type(obj, "Object");
+  // },
+  // function(obj: unknown): obj is Function {
+  //   return this.type(obj, "Function");
+  // },
+  // asyncFunction(obj: unknown): obj is Function {
+  //   return this.type(obj, "AsyncFunction");
+  // },
+  // null(obj: unknown): obj is null {
+  //   return this.type(obj, "Null");
+  // },
+  // undefined(obj: unknown): obj is undefined {
+  //   return this.type(obj, "Undefined");
+  // },
+  // number(obj: unknown): obj is number {
+  //   return this.type(obj, "Number");
+  // },
+  // array(obj: unknown): obj is [] {
+  //   return this.type(obj, "Array");
+  // },
 };
