@@ -2,7 +2,7 @@
 	"name": "colorful-monorepo",
 	"displayName": "Colorful Monorepo - javascript, typescript, npm, yarn, pnpm, rush, nodejs",
 	"description": "A super amazing monorepo helper",
-	"version": "0.0.1",
+	"version": "0.0.2-alpha.0",
 	"license": "AGPL-3.0",
 	"publisher": "WangHan",
 	"private": true,
