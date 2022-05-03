@@ -8,6 +8,7 @@ import {
   FileType,
   Uri,
   workspace,
+  ConfigurationScope,
 } from "vscode";
 import { promisify } from "util";
 import { stat } from "fs/promises";

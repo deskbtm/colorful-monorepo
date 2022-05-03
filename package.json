@@ -199,6 +199,11 @@
 					"default": false,
 					"description": "Workspace is initialized"
 				},
+				"ColorfulMonorepo.drawer.init": {
+					"type": "boolean",
+					"default": false,
+					"description": "Workspace is initialized"
+				},
 				"ColorfulMonorepo.drawer.exclude": {
 					"type": "object",
 					"default": {
@@ -214,18 +219,23 @@
 						"**/.github": true,
 						"**/.yarn": true,
 						"**/.prettierrc": true,
-						"**/.eslintrc.js": true,
-						"**/LICENSE-zh": true,
+						"**/.eslintrc*": true,
+						"**/LICENSE*": true,
 						"**/.eslintignore": true,
 						"**/node_modules": true,
 						"**/Dockerfile": true,
-						"**/ormconfig.js": true,
+						"**/docker-compose.*": true,
 						"**/tsconfig.json": true,
-						"**/nest-cli.json": true,
+						"**/jsconfig.json": true,
 						"**/package.json": true,
 						"**/.env.*": true,
 						"**/test": true,
-						"**/.vscode": true
+						"**/.vscode": true,
+						"**/.next": true,
+						"**/.yarnrc.*": true,
+						"**/.npmrc*": true,
+						"**/.gitmodules": true,
+						"**/README.*": true
 					},
 					"description": "Workspace is initialized"
 				}

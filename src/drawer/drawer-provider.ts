@@ -22,6 +22,7 @@ import {
   Disposable,
   commands,
   FileSystemWatcher,
+  ConfigurationTarget,
 } from "vscode";
 import micromatch from "micromatch";
 import { deleteFile, moveOut, toggleExclude } from "./actions";
@@ -96,6 +97,8 @@ export class DrawerProvider
       });
       this.refresh();
     });
+
+    this.#initDefaultConfiguration();
   }
 
   override dispose(): void {
@@ -108,6 +111,21 @@ export class DrawerProvider
 
   public refresh(): void {
     this.fire(undefined);
+  }
+
+  async #initDefaultConfiguration() {
+    const fileConfig = workspace.getConfiguration("files");
+    const drawerConfig = getExtensionConfig("ColorfulMonorepo.drawer");
+    if (!drawerConfig.get("init")) {
+      await drawerConfig.update("init", true, ConfigurationTarget.Workspace);
+      await await fileConfig.update(
+        "exclude",
+        drawerConfig.get("exclude"),
+        ConfigurationTarget.Workspace
+      );
+
+      this.refresh();
+    }
   }
 
   #add2WatchFs(uri: Uri) {
@@ -180,11 +198,13 @@ export class DrawerProvider
               ignore,
             });
 
-            if (r) {
+            const isDirectory = f.type === FileType.Directory;
+
+            if (r || isDirectory) {
               items.push(
                 new FileItem(
                   f.uri,
-                  f.type === FileType.Directory
+                  isDirectory
                     ? TreeItemCollapsibleState.Collapsed
                     : TreeItemCollapsibleState.None,
                   f.name,

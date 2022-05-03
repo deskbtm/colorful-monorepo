@@ -19,13 +19,16 @@ export const moveOut = async function (
       break;
     }
   }
+  const e = JSON.parse(JSON.stringify(exclude));
 
   if (key) {
-    const e = JSON.parse(JSON.stringify(exclude));
     delete e[key];
-    await fileConfig.update("exclude", e, ConfigurationTarget.Workspace);
-    drawerProvider.refresh();
+  } else {
+    e["!(" + item.filename + ")"] = true;
   }
+
+  await fileConfig.update("exclude", e, ConfigurationTarget.Workspace);
+  drawerProvider.refresh();
 };
 
 export const move2DrawerGlobHandler = async function (
