@@ -17,6 +17,7 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+import { disposeAll } from "./utils";
 import { commands, Disposable, ExtensionContext, window } from "vscode";
 import { DrawerProvider } from "./drawer/drawer-provider";
 import { colorizeHandler } from "./colorize";
@@ -29,12 +30,7 @@ import { selectWorkspacePackages } from "./javascript/workspace";
 import { move2DrawerGlobHandler, moveOut } from "./drawer/actions";
 import { createAutoArrange } from "./arrange";
 
-let drawerRefresh: Disposable | undefined;
-let move2Drawer: Disposable | undefined;
-let move2DrawerByGlob: Disposable | undefined;
-let moveOutFromDrawer: Disposable | undefined;
-let selectPackages: Disposable | undefined;
-let autoArrange: Disposable | undefined;
+const disposables: Disposable[] = [];
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -45,8 +41,6 @@ export function activate(context: ExtensionContext) {
     return;
   }
 
-  console.log(context.workspaceState);
-
   // 此处强制开启实验性的 file nesting
   switchExperimentalFileNesting(true);
 
@@ -56,60 +50,38 @@ export function activate(context: ExtensionContext) {
   const arrangeConfig = getExtensionConfig("ColorfulMonorepo.arrange");
 
   if (arrangeConfig.get<boolean>("enabled")) {
+    // 如果开启arrange 则关闭Open Editors
     commands.executeCommand("workbench.explorer.openEditorsView.removeView");
   }
 
   const drawerProvider = new DrawerProvider(cwd);
 
-  window.createTreeView("drawer", {
-    treeDataProvider: new DrawerProvider(cwd),
+  const drawerView = window.createTreeView("drawer", {
+    treeDataProvider: drawerProvider,
   });
 
-  drawerRefresh = commands.registerCommand(
-    "com.deskbtm.ColorfulMonorepo.drawer.refresh",
-    () => drawerProvider.refresh()
-  );
-
-  move2DrawerByGlob = commands.registerCommand(
+  const move2DrawerByGlob = commands.registerCommand(
     "com.deskbtm.ColorfulMonorepo.drawer.move2",
     (item) => move2DrawerGlobHandler(item, drawerProvider)
   );
 
-  moveOutFromDrawer = commands.registerCommand(
-    "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
-    (item) => {
-      moveOut(item, drawerProvider);
-    }
-  );
-
-  selectPackages = commands.registerCommand(
+  const selectPackages = commands.registerCommand(
     "com.deskbtm.ColorfulMonorepo.select",
     selectWorkspacePackages
   );
 
-  autoArrange = createAutoArrange(context);
+  const autoArrange = createAutoArrange(context);
 
-  context.subscriptions.push(
-    moveOutFromDrawer,
-    drawerRefresh,
-    move2DrawerByGlob,
-    selectPackages,
-    autoArrange
-  );
+  disposables.push(move2DrawerByGlob, selectPackages, autoArrange, drawerView);
 
   colorizeConfig.get<boolean>("enabled")
-    ? context.subscriptions.push(colorizeHandler)
+    ? disposables.push(colorizeHandler)
     : colorizeHandler.dispose();
+
+  context.subscriptions.push(...disposables);
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-  colorizeHandler.dispose();
-
-  autoArrange?.dispose();
-  drawerRefresh?.dispose();
-  move2Drawer?.dispose();
-  move2DrawerByGlob?.dispose();
-  moveOutFromDrawer?.dispose();
-  selectPackages?.dispose();
+  disposeAll(disposables);
 }

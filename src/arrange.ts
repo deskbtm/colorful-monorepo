@@ -66,7 +66,7 @@ export const createAutoArrange = (context: ExtensionContext) => {
           let tabs = context.workspaceState.get(
             folder.uri.fsPath
           ) as Set<string>;
-          console.log(folder.uri.fsPath, tabs);
+
           if (!!tabs && is.set(tabs)) {
             tabs.add(e.document.uri.fsPath);
           } else {

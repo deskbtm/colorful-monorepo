@@ -1,7 +1,14 @@
+import { getPackageInfos } from "@deskbtm/workspace-tools";
 /* eslint-disable @typescript-eslint/naming-convention */
 import { glob } from "glob";
 import { isAbsolute, join, normalize, relative } from "path";
-import { ConfigurationTarget, FileType, Uri, workspace } from "vscode";
+import {
+  ConfigurationTarget,
+  Disposable,
+  FileType,
+  Uri,
+  workspace,
+} from "vscode";
 import { promisify } from "util";
 import { stat } from "fs/promises";
 import { Stats } from "fs";
@@ -244,4 +251,24 @@ export const is = {
   // array(obj: unknown): obj is [] {
   //   return this.type(obj, "Array");
   // },
+};
+
+export const getPackage = function (name: string) {
+  const cwd = getExtensionCwd();
+  if (!cwd) {
+    return;
+  }
+  return getPackageInfos(cwd)?.[name];
+};
+
+export const disposeAll = function (disposables: Disposable[]) {
+  const disposableTmp = Array.from(disposables);
+  disposables.length = 0;
+  for (const d of disposableTmp) {
+    try {
+      d?.dispose();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 };

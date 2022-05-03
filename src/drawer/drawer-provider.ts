@@ -1,5 +1,11 @@
+import { DurableWorkspaceItem } from "../interface";
 import { TextItem } from "../component/empty-item";
-import { getExtensionConfig, humanFileList } from "../utils";
+import {
+  getExtensionConfig,
+  humanFileList,
+  disposeAll,
+  getPackage,
+} from "../utils";
 import { FileItem } from "./file-item";
 import { WorkspaceItem } from "./workspace-item";
 import {
@@ -13,51 +19,109 @@ import {
   FileType,
   Uri,
   ThemeIcon,
+  Disposable,
+  commands,
+  FileSystemWatcher,
 } from "vscode";
 import micromatch from "micromatch";
+import { deleteFile, moveOut, toggleExclude } from "./actions";
 
 type DrawerItem = WorkspaceItem | FileItem | TextItem;
 
 export class DrawerProvider
-  // extends EventEmitter<DrawerItem | undefined>
-  implements TreeDataProvider<DrawerItem>
+  extends EventEmitter<DrawerItem[] | undefined>
+  implements TreeDataProvider<DrawerItem>, Disposable
 {
-  private watchers = new Map();
-
-  private _onDidChangeTreeData: EventEmitter<DrawerItem | undefined> =
-    new EventEmitter<DrawerItem | undefined>();
-
-  readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+  #watchers = new Map<string, FileSystemWatcher>();
+  #disposables: Disposable[] = [];
+  readonly onDidChangeTreeData = this.event;
 
   constructor(private workspaceRoot: string) {
-    // super();
+    super();
+
+    const drawerRefresh = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.refresh",
+      () => {
+        this.refresh();
+      }
+    );
+
+    const showCmdDrawer = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.show",
+      () => toggleExclude(false)
+    );
+
+    const hideCmdDrawer = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.hide",
+      () => toggleExclude(true)
+    );
+
+    // Delete file directly in drawer
+    const deleteCmdDrawer = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.delete",
+      (item) => {
+        deleteFile(item).then(() => {
+          this.refresh();
+        });
+      }
+    );
+
+    const moveOutCmdDrawer = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
+      (item) => {
+        moveOut(item, this);
+      }
+    );
+
+    this.#disposables.push(
+      drawerRefresh,
+      showCmdDrawer,
+      hideCmdDrawer,
+      moveOutCmdDrawer,
+      deleteCmdDrawer
+    );
 
     workspace.workspaceFolders?.forEach((folder) => {
-      this.#add2Watch(folder.uri);
+      this.#add2WatchFs(folder.uri);
     });
 
     workspace.onDidChangeWorkspaceFolders((e) => {
       e.added.forEach((e) => {
-        this.#add2Watch(e.uri);
+        this.#add2WatchFs(e.uri);
       });
 
       e.removed.forEach((e) => {
-        this.watchers.delete(e.uri.fsPath);
+        this.#watchers.get(e.uri.fsPath)?.dispose();
+        this.#watchers.delete(e.uri.fsPath);
       });
+      this.refresh();
     });
   }
 
-  public refresh(): void {
-    this._onDidChangeTreeData.fire(undefined);
+  override dispose(): void {
+    disposeAll(this.#disposables);
+    for (const w of this.#watchers) {
+      w?.[1]?.dispose();
+    }
+    this.#watchers.clear();
   }
 
-  #add2Watch(uri: Uri) {
+  public refresh(): void {
+    this.fire(undefined);
+  }
+
+  #add2WatchFs(uri: Uri) {
     const watcher = workspace.createFileSystemWatcher(
-      new RelativePattern(uri, "**​")
+      new RelativePattern(uri, "**")
     );
 
-    this.watchers.set(uri.fsPath, watcher);
-    watcher.onDidChange(() => this.refresh());
+    this.#watchers.set(uri.fsPath, watcher);
+    watcher.onDidCreate(() => {
+      this.refresh();
+    });
+    watcher.onDidDelete(() => {
+      this.refresh();
+    });
   }
 
   #getExcludeGlobs(exclude: Record<string, boolean>) {
@@ -79,12 +143,15 @@ export class DrawerProvider
   }
 
   getChildren(element?: DrawerItem): Thenable<DrawerItem[]> {
-    if (!this.workspaceRoot) {
-      window.showInformationMessage("Colorful Monorepo: Empty Root Workspace");
+    const config = getExtensionConfig("ColorfulMonorepo.workspaces");
+    const collection = config.get<DurableWorkspaceItem[]>(
+      "collection"
+    ) as DurableWorkspaceItem[];
+
+    if (!this.workspaceRoot && !collection) {
+      window.showInformationMessage("Monorepo: Empty Root Workspace");
       return Promise.resolve([]);
     }
-
-    const folders = workspace.workspaceFolders ?? [];
 
     return new Promise(async (resolve, reject) => {
       if (element) {
@@ -99,7 +166,7 @@ export class DrawerProvider
 
           const folderUri =
             element.resourceUri ??
-            (folders.find((v) => v.name === element.label)?.uri as Uri);
+            Uri.file(collection.find((v) => v.label === element.label)?.path!);
 
           const files = await workspace.fs.readDirectory(folderUri);
 
@@ -146,9 +213,15 @@ export class DrawerProvider
       } else {
         const items = [];
 
-        for (const f of folders) {
+        for (const f of collection) {
+          const pkg = getPackage(f.packageName);
           items.push(
-            new WorkspaceItem(f.name, TreeItemCollapsibleState.Collapsed)
+            new WorkspaceItem(
+              f.label,
+              TreeItemCollapsibleState.Collapsed,
+              pkg?.version,
+              f.label
+            )
           );
         }
 

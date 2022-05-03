@@ -1,8 +1,17 @@
-当让你也可以单独忽略某个文件
+[中文](https://github.com/deskbtm/colorful-monorepo/blob/main/README-zh.md)
 
-普通提升开发效率
+# Colorful Monorepo
 
-**Enjoy !**
+
+This extension is not free. See [pricing](#pricing). Off cause, it's optional.
+
+
+
+## Pricing
+
+If you have a wonderful experience, don't forgot to bug me a coffee.
+
+**Enjoy !** 🖖
 
 <div>
 <a href="https://www.buymeacoffee.com/Nawbc">

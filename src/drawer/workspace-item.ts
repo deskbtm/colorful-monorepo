@@ -6,11 +6,9 @@ export class WorkspaceItem extends TreeItem {
   constructor(
     public override readonly label: string,
     public override readonly collapsibleState: TreeItemCollapsibleState,
-    // public readonly uri: Uri,
+    public override readonly description?: string,
     public override readonly tooltip?: string
   ) {
     super(label, collapsibleState);
   }
 }
-
-// public override readonly command?: Command,

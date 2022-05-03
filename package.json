@@ -62,7 +62,13 @@
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.show",
-				"title": "Show"
+				"title": "Show",
+				"icon": "$(eye)"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.hide",
+				"title": "Hide",
+				"icon": "$(eye-closed)"
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
@@ -71,6 +77,10 @@
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.arrange.auto",
 				"title": "Auto arrange"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.delete",
+				"title": "Delete file(trash)"
 			}
 		],
 		"menus": {
@@ -81,26 +91,37 @@
 					"group": "navigation"
 				},
 				{
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.show",
+					"when": "view == drawer",
+					"group": "navigation@0"
+				},
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.hide",
+					"when": "view == drawer",
+					"group": "navigation@1"
+				},
+				{
 					"command": "com.deskbtm.ColorfulMonorepo.drawer.refresh",
 					"when": "view == drawer",
-					"group": "navigation"
+					"group": "navigation@2"
 				}
 			],
 			"view/item/context": [
 				{
 					"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
-					"when": "view == drawer && viewItem == fileItem"
+					"when": "view == drawer && viewItem == fileItem",
+					"group": "@0"
+				},
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.delete",
+					"when": "view == drawer && viewItem == fileItem",
+					"group": "@1"
 				}
 			],
 			"explorer/context": [
 				{
 					"command": "com.deskbtm.ColorfulMonorepo.drawer.move2",
 					"when": "activeViewlet == workbench.view.explorer",
-					"group": "drawer"
-				},
-				{
-					"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
-					"when": "activeViewlet == drawer",
 					"group": "drawer"
 				}
 			]
@@ -176,6 +197,36 @@
 				"ColorfulMonorepo.arrange.init": {
 					"type": "boolean",
 					"default": false,
+					"description": "Workspace is initialized"
+				},
+				"ColorfulMonorepo.drawer.exclude": {
+					"type": "object",
+					"default": {
+						"**/.git": true,
+						"**/.gitignore": true,
+						"**/.gitattributes": true,
+						"**/.svn": true,
+						"**/.hg": true,
+						"**/CVS": true,
+						"**/.DS_Store": true,
+						"**/Thumbs.db": true,
+						"**/.editorconfig": true,
+						"**/.github": true,
+						"**/.yarn": true,
+						"**/.prettierrc": true,
+						"**/.eslintrc.js": true,
+						"**/LICENSE-zh": true,
+						"**/.eslintignore": true,
+						"**/node_modules": true,
+						"**/Dockerfile": true,
+						"**/ormconfig.js": true,
+						"**/tsconfig.json": true,
+						"**/nest-cli.json": true,
+						"**/package.json": true,
+						"**/.env.*": true,
+						"**/test": true,
+						"**/.vscode": true
+					},
 					"description": "Workspace is initialized"
 				}
 			}
