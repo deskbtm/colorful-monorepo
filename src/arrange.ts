@@ -1,4 +1,3 @@
-import { getWorkspaces } from "@deskbtm/workspace-tools";
 import {
   commands,
   ConfigurationTarget,
@@ -9,12 +8,13 @@ import {
 } from "vscode";
 import debounce from "lodash.debounce";
 import { window } from "vscode";
-import { getExtensionConfig, getExtensionCwd, is, isWithin } from "./utils";
-
-enum ConfirmActions {
-  YES = "Yes",
-  NO = "No",
-}
+import {
+  ConfirmActions,
+  getExtensionConfig,
+  getExtensionCwd,
+  is,
+  isWithin,
+} from "./utils";
 
 export const createAutoArrange = (context: ExtensionContext) => {
   const autoArrange = window.onDidChangeActiveTextEditor(

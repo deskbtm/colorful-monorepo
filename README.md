@@ -2,6 +2,9 @@
 
 # Colorful Monorepo
 
+![png1](./assets/Peek%202022-05-03%2021-16.gif)
+
+To improve the performance, the drawer will show all directories, even if it is not in `files.exclude`.
 
 This extension is not free. See [pricing](#pricing). Off cause, it's optional.
 

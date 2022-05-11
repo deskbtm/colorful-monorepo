@@ -1,10 +1,11 @@
-import { DurableWorkspaceItem } from "../interface";
+import { CollectionItem } from "../interface";
 import { TextItem } from "../component/empty-item";
 import {
   getExtensionConfig,
   humanFileList,
   disposeAll,
   getPackage,
+  ConfirmActions,
 } from "../utils";
 import { FileItem } from "./file-item";
 import { WorkspaceItem } from "./workspace-item";
@@ -23,9 +24,17 @@ import {
   commands,
   FileSystemWatcher,
   ConfigurationTarget,
+  WorkspaceFolder,
 } from "vscode";
 import micromatch from "micromatch";
-import { deleteFile, moveOut, toggleExclude } from "./actions";
+import {
+  deleteFile,
+  move2DrawerGlobHandler,
+  moveOut,
+  toggleExclude,
+} from "./actions";
+import { PackageInfo } from "@deskbtm/workspace-tools";
+import glob from "fast-glob";
 
 type DrawerItem = WorkspaceItem | FileItem | TextItem;
 
@@ -35,6 +44,7 @@ export class DrawerProvider
 {
   #watchers = new Map<string, FileSystemWatcher>();
   #disposables: Disposable[] = [];
+
   readonly onDidChangeTreeData = this.event;
 
   constructor(private workspaceRoot: string) {
@@ -49,16 +59,30 @@ export class DrawerProvider
 
     const showCmdDrawer = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.show",
-      () => toggleExclude(false)
+      async () => {
+        await toggleExclude(false);
+        this.refresh();
+      }
+    );
+
+    const move2DrawerByGlob = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.move2",
+      async (_, items) => {
+        move2DrawerGlobHandler(items);
+        this.refresh();
+      }
     );
 
     const hideCmdDrawer = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.hide",
-      () => toggleExclude(true)
+      async () => {
+        await toggleExclude(true);
+        this.refresh();
+      }
     );
 
     // Delete file directly in drawer
-    const deleteCmdDrawer = commands.registerCommand(
+    const deleteCmd = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.delete",
       (item) => {
         deleteFile(item).then(() => {
@@ -67,26 +91,27 @@ export class DrawerProvider
       }
     );
 
-    const moveOutCmdDrawer = commands.registerCommand(
+    const moveOutCmd = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
-      (item) => {
-        moveOut(item, this);
+      async (item) => {
+        await moveOut(item);
+        this.refresh();
       }
     );
 
-    this.#disposables.push(
-      drawerRefresh,
-      showCmdDrawer,
-      hideCmdDrawer,
-      moveOutCmdDrawer,
-      deleteCmdDrawer
+    const moveOutAllCmd = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.moveOutAll",
+      async (item) => {
+        await moveOut(item, true);
+        this.refresh();
+      }
     );
 
     workspace.workspaceFolders?.forEach((folder) => {
       this.#add2WatchFs(folder.uri);
     });
 
-    workspace.onDidChangeWorkspaceFolders((e) => {
+    const workspaceListener = workspace.onDidChangeWorkspaceFolders((e) => {
       e.added.forEach((e) => {
         this.#add2WatchFs(e.uri);
       });
@@ -98,6 +123,17 @@ export class DrawerProvider
       this.refresh();
     });
 
+    this.#disposables.push(
+      drawerRefresh,
+      showCmdDrawer,
+      hideCmdDrawer,
+      moveOutCmd,
+      deleteCmd,
+      move2DrawerByGlob,
+      workspaceListener,
+      moveOutAllCmd
+    );
+
     this.#initDefaultConfiguration();
   }
 
@@ -106,6 +142,7 @@ export class DrawerProvider
     for (const w of this.#watchers) {
       w?.[1]?.dispose();
     }
+
     this.#watchers.clear();
   }
 
@@ -116,14 +153,25 @@ export class DrawerProvider
   async #initDefaultConfiguration() {
     const fileConfig = workspace.getConfiguration("files");
     const drawerConfig = getExtensionConfig("ColorfulMonorepo.drawer");
+
     if (!drawerConfig.get("init")) {
+      const excludeConfigs: Record<string, boolean> | undefined =
+        drawerConfig.get("exclude");
       await drawerConfig.update("init", true, ConfigurationTarget.Workspace);
-      await await fileConfig.update(
-        "exclude",
-        drawerConfig.get("exclude"),
-        ConfigurationTarget.Workspace
+
+      const val = await window.showInformationMessage(
+        `Monorepo: Init the default file excludes ? \n
+        ${Object.keys(excludeConfigs!).join("\n")}
+        `,
+        ConfirmActions.YES as string,
+        ConfirmActions.NO as string
       );
 
+      await fileConfig.update(
+        "exclude",
+        val === ConfirmActions.YES ? excludeConfigs : {},
+        ConfigurationTarget.Workspace
+      );
       this.refresh();
     }
   }
@@ -137,12 +185,13 @@ export class DrawerProvider
     watcher.onDidCreate(() => {
       this.refresh();
     });
+
     watcher.onDidDelete(() => {
       this.refresh();
     });
   }
 
-  #getExcludeGlobs(exclude: Record<string, boolean>) {
+  #createExtraGlobs(exclude: Record<string, boolean>) {
     const fileExclude = [];
     const externalExclude = [];
 
@@ -162,25 +211,33 @@ export class DrawerProvider
 
   getChildren(element?: DrawerItem): Thenable<DrawerItem[]> {
     const config = getExtensionConfig("ColorfulMonorepo.workspaces");
-    const collection = config.get<DurableWorkspaceItem[]>(
-      "collection"
-    ) as DurableWorkspaceItem[];
+    let collection = config.get("collection") as CollectionItem[];
 
-    if (!this.workspaceRoot && !collection) {
+    const singleWorkspace = workspace.workspaceFolders?.[0] as WorkspaceFolder;
+
+    if (!this.workspaceRoot && !singleWorkspace) {
       window.showInformationMessage("Monorepo: Empty Root Workspace");
       return Promise.resolve([]);
     }
 
+    if (collection?.length < 1) {
+      collection = [
+        {
+          label: singleWorkspace.name,
+          path: singleWorkspace.uri.fsPath,
+        },
+      ];
+    }
+
     return new Promise(async (resolve, reject) => {
+      const fileConfig = getExtensionConfig("files");
+      const exclude = fileConfig.get<Record<string, boolean>>("exclude") ?? {};
+      const globs = this.#createExtraGlobs(exclude);
+
       if (element) {
         try {
-          const fileConfig = getExtensionConfig("files");
           const drawerConfig = getExtensionConfig("ColorfulMonorepo.drawer");
-          const exclude =
-            fileConfig.get<Record<string, boolean>>("exclude") ?? {};
           const ignore = drawerConfig.get<string[]>("ignore");
-
-          const globs = this.#getExcludeGlobs(exclude);
 
           const folderUri =
             element.resourceUri ??
@@ -233,8 +290,8 @@ export class DrawerProvider
       } else {
         const items = [];
 
-        for (const f of collection) {
-          const pkg = getPackage(f.packageName);
+        for await (const f of collection) {
+          const pkg = getPackage(f.packageName) as PackageInfo;
           items.push(
             new WorkspaceItem(
               f.label,

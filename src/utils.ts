@@ -1,6 +1,5 @@
 import { getPackageInfos } from "@deskbtm/workspace-tools";
 /* eslint-disable @typescript-eslint/naming-convention */
-import { glob } from "glob";
 import { isAbsolute, join, normalize, relative } from "path";
 import {
   ConfigurationTarget,
@@ -8,13 +7,13 @@ import {
   FileType,
   Uri,
   workspace,
-  ConfigurationScope,
 } from "vscode";
-import { promisify } from "util";
 import { stat } from "fs/promises";
-import { Stats } from "fs";
 
-export const globAsync = promisify(glob);
+export enum ConfirmActions {
+  YES = "Yes",
+  NO = "No",
+}
 
 /**
  *
@@ -105,7 +104,7 @@ export const invertHexColor = function (hex: string) {
   return luminance && luminance < 140 ? "#ffffff" : "#000000";
 };
 
-export const autoGenerateColor = function () {
+export const randomColorPair = function () {
   const background = randomColor();
   const foreground = invertHexColor(background);
   return {
@@ -141,13 +140,6 @@ interface HumanFile {
   uri: Uri;
 }
 
-interface FormattedFile {
-  name: string;
-  uri: Uri;
-  stat: Stats;
-  type: FileType;
-}
-
 export const getFiles = async (base: Uri, names: string[]) => {
   return Promise.all(
     names.map(async (n) => {
@@ -174,32 +166,6 @@ export const getFiles = async (base: Uri, names: string[]) => {
     })
   );
 };
-
-// /**
-//  *
-//  * convert {@link FileSystem.readDirectory} result readable
-//  *
-//  * @param base
-//  * @param files
-//  * @param sortType
-//  */
-// export const humanFileList = (files: FormattedFile[]): HumanFile[] => {
-//   const fileList: HumanFile[] = [];
-//   const folderList: HumanFile[] = [];
-
-//   for (const f of files) {
-//     if (f.type === FileType.Directory) {
-//       folderList.push(f);
-//     } else {
-//       fileList.push(f);
-//     }
-//   }
-
-//   folderList.sort((p, n) => p.name.localeCompare(n.name));
-//   fileList.sort((p, n) => p.name.localeCompare(n.name));
-
-//   return folderList.concat(fileList);
-// };
 
 export const humanFileList = (
   base: Uri,
@@ -254,12 +220,12 @@ export const is = {
   // },
 };
 
-export const getPackage = function (name: string) {
+export const getPackage = function (name?: string) {
   const cwd = getExtensionCwd();
   if (!cwd) {
     return;
   }
-  return getPackageInfos(cwd)?.[name];
+  return name ? getPackageInfos(cwd)?.[name] : getPackageInfos(cwd);
 };
 
 export const disposeAll = function (disposables: Disposable[]) {
@@ -272,4 +238,11 @@ export const disposeAll = function (disposables: Disposable[]) {
       console.error(e);
     }
   }
+};
+
+export const clearAllConfiguration = async function () {
+  await getExtensionConfig().update("", {}, ConfigurationTarget.Workspace);
+  await workspace
+    .getConfiguration("files")
+    .update("exclude", {}, ConfigurationTarget.Workspace);
 };

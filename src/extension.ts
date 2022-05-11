@@ -26,15 +26,19 @@ import {
   getExtensionCwd,
   switchExperimentalFileNesting,
 } from "./utils";
-import { selectWorkspacePackages } from "./javascript/workspace";
-import { move2DrawerGlobHandler, moveOut } from "./drawer/actions";
+import {
+  removeWorkspace,
+  selectWorkspacePackages,
+  folderAsWorkspace,
+  syncFolders2Durable,
+} from "./javascript/workspace";
 import { createAutoArrange } from "./arrange";
 
 const disposables: Disposable[] = [];
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext) {
   const cwd = getExtensionCwd();
 
   if (!cwd) {
@@ -44,13 +48,16 @@ export function activate(context: ExtensionContext) {
   // 此处强制开启实验性的 file nesting
   switchExperimentalFileNesting(true);
 
+  // 同步folders和ColorfulMonorepo.workspaces.collection
+  await syncFolders2Durable();
+
   commands.executeCommand("setContext", "explorerExclude:enabled", true);
 
   const colorizeConfig = getExtensionConfig("ColorfulMonorepo.colorize");
   const arrangeConfig = getExtensionConfig("ColorfulMonorepo.arrange");
 
   if (arrangeConfig.get<boolean>("enabled")) {
-    // 如果开启arrange 则关闭Open Editors
+    // if arrange enabled OpenEditors will disable
     commands.executeCommand("workbench.explorer.openEditorsView.removeView");
   }
 
@@ -60,19 +67,30 @@ export function activate(context: ExtensionContext) {
     treeDataProvider: drawerProvider,
   });
 
-  const move2DrawerByGlob = commands.registerCommand(
-    "com.deskbtm.ColorfulMonorepo.drawer.move2",
-    (item) => move2DrawerGlobHandler(item, drawerProvider)
+  const selectPackages = commands.registerCommand(
+    "com.deskbtm.ColorfulMonorepo.workspace.select",
+    selectWorkspacePackages
   );
 
-  const selectPackages = commands.registerCommand(
-    "com.deskbtm.ColorfulMonorepo.select",
-    selectWorkspacePackages
+  const asWorkspace = commands.registerCommand(
+    "com.deskbtm.ColorfulMonorepo.workspace.asWorkspace",
+    async (_, items) => folderAsWorkspace(_, items)
+  );
+
+  const rmWorkspace = commands.registerCommand(
+    "com.deskbtm.ColorfulMonorepo.workspace.removeWorkspace",
+    async (_, items) => removeWorkspace(_, items)
   );
 
   const autoArrange = createAutoArrange(context);
 
-  disposables.push(move2DrawerByGlob, selectPackages, autoArrange, drawerView);
+  disposables.push(
+    drawerView,
+    selectPackages,
+    autoArrange,
+    asWorkspace,
+    rmWorkspace
+  );
 
   colorizeConfig.get<boolean>("enabled")
     ? disposables.push(colorizeHandler)

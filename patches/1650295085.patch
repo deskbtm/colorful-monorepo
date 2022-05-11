@@ -62,7 +62,7 @@ index e61b0ab..3d76f09 100644
  		],
  		"menus": {
 @@ -60,6 +61,11 @@
- 					"command": "com.deskbtm.ColorfulMonorepo.select",
+ 					"command": "com.deskbtm.ColorfulMonorepo.workspace.select",
  					"when": "view == workbench.explorer.fileView",
  					"group": "navigation"
 +				},
@@ -109,9 +109,9 @@ index 06c1344..41fc70d 100644
 +import minimatch from "minimatch";
 +import { readdir, stat } from "fs/promises";
 +import { join } from "path";
- 
+
  type DrawerItem = WorkspaceItem | FileItem;
- 
+
  export class DrawerProvider
 -  extends EventEmitter<DrawerItem | any>
 +  extends EventEmitter<DrawerItem | undefined>
@@ -121,7 +121,7 @@ index 06c1344..41fc70d 100644
 +  private watchers = new Map();
 +
 +  readonly onDidChangeTreeData = this.event;
- 
+
    constructor(private workspaceRoot: string) {
      super();
      workspace.workspaceFolders?.forEach((folder) => {
@@ -142,7 +142,7 @@ index 06c1344..41fc70d 100644
 +      });
      });
    }
- 
+
 +  public refresh(): void {
 +    this.fire(undefined);
 +  }
@@ -162,7 +162,7 @@ index 06c1344..41fc70d 100644
 @@ -41,17 +73,15 @@ export class DrawerProvider
        return Promise.resolve([]);
      }
- 
+
 -    return new Promise(async (resolve, reject) => {
 -      const folders = workspace.workspaceFolders;
 -      if (!folders) {
@@ -170,21 +170,21 @@ index 06c1344..41fc70d 100644
 -        return;
 -      }
 +    const folders = workspace.workspaceFolders ?? [];
- 
+
 +    return new Promise(async (resolve, reject) => {
        if (element) {
          const config = getExtensionConfig("files");
          const exclude = config.get<Record<string, boolean>>("exclude");
- 
+
 +        const excludeGlobs = [];
 +
          const folder = folders.find((v) => v.name === element.label);
- 
+
          if (!folder) {
 @@ -59,14 +89,53 @@ export class DrawerProvider
            return;
          }
- 
+
 -        const files = await workspace.fs.readDirectory(
 +        for (const key in exclude) {
 +          if (exclude[key]) {
@@ -208,15 +208,15 @@ index 06c1344..41fc70d 100644
 +        const files1 = await workspace.fs.readDirectory(
            element.resourceUri ?? folder.uri
          );
- 
+
 -        const fileList = humanFileList(folder.uri, files);
 +        // const files = await workspace.fs.readDirectory(folderUri);
 +
 +        const fileList = humanFileList(files);
 +        const fileList1 = humanFileList1(folder.uri, files1);
- 
+
          const items: FileItem[] = [];
- 
+
 +        // fileList1.filter((v) => {
 +
 +        // });
@@ -240,14 +240,14 @@ index 06c1344..41fc70d 100644
 @@ -78,7 +147,9 @@ export class DrawerProvider
            );
          }
- 
+
 -        resolve(items);
 +        console.log(items);
 +
 +        resolve([]);
        } else {
          const items = [];
- 
+
 @@ -91,106 +162,5 @@ export class DrawerProvider
          resolve(items);
        }
@@ -361,7 +361,7 @@ index 346afdb..5909c7d 100644
 +++ b/src/extension.ts
 @@ -32,7 +32,19 @@ export function activate(context: ExtensionContext) {
    const cwd = getExtensionCwd();
- 
+
    if (cwd) {
 -    window.registerTreeDataProvider("drawer", new DrawerProvider(cwd));
 +    const drawerProvider = new DrawerProvider(cwd);
@@ -378,7 +378,7 @@ index 346afdb..5909c7d 100644
 +      }
 +    );
    }
- 
+
    let selectPackages = commands.registerCommand(
 diff --git a/src/utils.ts b/src/utils.ts
 index b2c6e67..7bdc1c1 100644
@@ -393,13 +393,13 @@ index b2c6e67..7bdc1c1 100644
  import { promisify } from "util";
 +import { stat } from "fs/promises";
 +import { Stats } from "fs";
- 
+
  export const globAsync = promisify(glob);
- 
+
 @@ -129,6 +131,40 @@ interface HumanFile {
    uri: Uri;
  }
- 
+
 +interface FormattedFile {
 +  name: string;
 +  uri: Uri;
