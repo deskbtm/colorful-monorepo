@@ -75,6 +75,11 @@
 				"icon": "$(eye-closed)"
 			},
 			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.editWorkspaceFile",
+				"title": "Edit Workspace File",
+				"icon": "$(go-to-file)"
+			},
+			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
 				"title": "Move out"
 			},
@@ -112,6 +117,11 @@
 					"command": "com.deskbtm.ColorfulMonorepo.drawer.refresh",
 					"when": "view == drawer",
 					"group": "navigation@2"
+				},
+				{
+					"command": "com.deskbtm.ColorfulMonorepo.drawer.editWorkspaceFile",
+					"when": "view == drawer",
+					"group": "navigation@3"
 				}
 			],
 			"view/item/context": [
@@ -246,22 +256,21 @@
 						"**/LICENSE": true,
 						"**/.eslintignore": true,
 						"**/node_modules": true,
-						"**/Dockerfile": true,
-						"**/docker-compose.*": true,
 						"**/tsconfig.json": true,
 						"**/jsconfig.json": true,
 						"**/package.json": true,
-						"**/.env.*": true,
-						"**/test": true,
 						"**/.vscode": true,
 						"**/.next": true,
 						"**/.gitmodules": true,
 						"**/.yarnrc*": true,
 						"**/.babelrc*": true,
-						"**/.npmrc*": true,
+						"**/.npmrc": true,
 						"**/README.*": true,
 						"**/dist": true,
-						"**/build": true
+						"**/build": true,
+						"**/yarn.lock": true,
+						"**/pnpm-lock.yaml": true,
+						"**/package-lock.json": true
 					},
 					"description": "Workspace is initialized"
 				}

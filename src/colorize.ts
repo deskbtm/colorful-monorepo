@@ -36,7 +36,7 @@ export const colorizeHandler = window.onDidChangeActiveTextEditor(
       return;
     }
 
-    workbenchConfig.update(
+    await workbenchConfig.update(
       "colorCustomizations",
       {
         ...currentColorCustomization,

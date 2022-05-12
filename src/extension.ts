@@ -18,14 +18,16 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { disposeAll } from "./utils";
-import { commands, Disposable, ExtensionContext, window } from "vscode";
+import {
+  commands,
+  ConfigurationTarget,
+  Disposable,
+  ExtensionContext,
+  window,
+} from "vscode";
 import { DrawerProvider } from "./drawer/drawer-provider";
 import { colorizeHandler } from "./colorize";
-import {
-  getExtensionConfig,
-  getExtensionCwd,
-  switchExperimentalFileNesting,
-} from "./utils";
+import { getExtensionConfig, getExtensionCwd } from "./utils";
 import {
   removeWorkspace,
   selectWorkspacePackages,
@@ -45,9 +47,6 @@ export async function activate(context: ExtensionContext) {
     return;
   }
 
-  // 此处强制开启实验性的 file nesting
-  switchExperimentalFileNesting(true);
-
   // 同步folders和ColorfulMonorepo.workspaces.collection
   await syncFolders2Durable();
 
@@ -59,6 +58,14 @@ export async function activate(context: ExtensionContext) {
   if (arrangeConfig.get<boolean>("enabled")) {
     // if arrange enabled OpenEditors will disable
     commands.executeCommand("workbench.explorer.openEditorsView.removeView");
+  }
+
+  if (!colorizeConfig.get<boolean>("enabled")) {
+    await getExtensionConfig("workbench").update(
+      "colorCustomizations",
+      {},
+      ConfigurationTarget.Workspace
+    );
   }
 
   const drawerProvider = new DrawerProvider(cwd);

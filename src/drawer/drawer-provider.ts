@@ -107,6 +107,13 @@ export class DrawerProvider
       }
     );
 
+    const editWorkspaceFile = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.editWorkspaceFile",
+      async () => {
+        commands.executeCommand("vscode.open", workspace.workspaceFile);
+      }
+    );
+
     workspace.workspaceFolders?.forEach((folder) => {
       this.#add2WatchFs(folder.uri);
     });
@@ -131,7 +138,8 @@ export class DrawerProvider
       deleteCmd,
       move2DrawerByGlob,
       workspaceListener,
-      moveOutAllCmd
+      moveOutAllCmd,
+      editWorkspaceFile
     );
 
     this.#initDefaultConfiguration();

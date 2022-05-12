@@ -64,23 +64,6 @@ export const matchEmoji = function (relative: string, isRoot = false) {
   return config.get<string>("prefix.unknown");
 };
 
-export const switchExperimentalFileNesting = function (enable?: boolean) {
-  const explorerConfig = getExtensionConfig("explorer");
-  const nestEnabled = explorerConfig.get("experimental.fileNesting.enabled");
-
-  if (nestEnabled === undefined) {
-    return;
-  }
-
-  if (enable !== nestEnabled) {
-    explorerConfig.update(
-      "experimental.fileNesting.enabled",
-      enable,
-      ConfigurationTarget.Workspace
-    );
-  }
-};
-
 export const randomColor = function () {
   var color = Math.floor(Math.random() * 16777215).toString(16);
   return "#" + ("000000" + color).slice(-6);
