@@ -12,8 +12,8 @@
             "path": "/home/nawbc/Workspace/colorful-monorepo",
             "packageName": "colorful-monorepo",
             "label": "🌱  colorful-monorepo",
-            "foreground": "#ffffff",
-            "background": "#207a2f"
+            "foreground": "#000000",
+            "background": "#c5bc5f"
         }
     ]
 }

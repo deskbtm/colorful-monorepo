@@ -13,7 +13,7 @@
 ### Workspace
 
 支持 `npm`,`yarn`, `pnpm`, `lerna`, `rush`。
-![png1](./assets/1.gif)
+![png1](https://s2.loli.net/2022/05/16/PV1iEJAOf3KS8yC.gif)
 当然也可以右击`Monorepo: As Workspace`手动添加，不包含`package.json`的文件夹。
 
 ### Drawer
@@ -24,13 +24,13 @@
 
 在 Drawer 中通过`Move out`将文件移出，同样支持多选。
 
-<img width="300" src="./assets/2.gif"/>
+<a href="https://sm.ms/image/6aqes9G8UjCbK4z" target="_blank"><img width="300" src="https://s2.loli.net/2022/05/16/6aqes9G8UjCbK4z.gif" ></a>
 
 **注意 出于对性能的考虑 drawer 中会显示所有的文件夹**
 
 在初次打开的项目中本插件会提示你添加默认隐藏的文件。
 
-<img width="300" src="./assets/3.png"/>
+<a href="https://sm.ms/image/7UVxQepwirJk9tW" target="_blank"><img width="300" src="https://s2.loli.net/2022/05/16/7UVxQepwirJk9tW.png" ></a>
 
 如果遇到问题可以点击 Drawer 视图右上角的编辑 Workspace File 按钮, 手动修复。
 
@@ -124,5 +124,5 @@ https://github.com/microsoft/workspace-tools MIT license
 <a href="https://www.buymeacoffee.com/Nawbc">
   <img src="https://s2.loli.net/2022/04/15/54EHkb2fCrBoFua.png" width="175"/>
 </a>
-<img width="170" src="https://s2.loli.net/2022/05/06/9JbaH7zi13RxmNk.jpg">
+<img width="170" src="https://s2.loli.net/2022/05/16/ikM3QeuOAWaP4dR.jpg">
 </div>
