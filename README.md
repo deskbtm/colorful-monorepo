@@ -4,6 +4,10 @@
 
 # Colorful Monorepo
 
+ <a href="https://github.com/deskbtm/colorful-monorepo/issues">
+      <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat" alt="chat on Discord">
+</a>
+
 This extension is not free. See [pricing](#pricing). Off cause, it's optional.
 
 `Colorful Monorepo` can help you to improve the development efficiency of your Monorepo project to some extent.
@@ -13,7 +17,7 @@ This extension is not free. See [pricing](#pricing). Off cause, it's optional.
 ### Workspace
 
 Support `npm`,`yarn`, `pnpm`, `lerna`, `rush`.
-![png1](./assets/Peek%202022-05-03%2021-16.gif)
+![png1](./assets/1.gif)
 You can also add the folder manually that not includes `package.json` by `Monorepo: As Workspace`.
 
 ### Drawer
@@ -22,13 +26,13 @@ Drawer ensures a crisp presentation of the workbench in the case of multiple Wor
 
 You can add files to the Drawer with `Monorepo: Move to drawer(Glob)`, which supports multiple selections. Note that the added file will take effect on all files of the same name in the project.
 
-<img width="300" src="./assets/Peek 2022-05-15 18-07.gif"/>
+<img width="300" src="./assets/2.gif"/>
 
 **For performance reasons, all folders are displayed in the drawer**
 
 Prompt you to add the default hidden files in first time.
 
-<img width="300" src="./assets/Screenshot%20from%202022-05-15%2017-35-25.png"/>
+<img width="300" src="./assets/3.png"/>
 
 You can click the `Edit Workspace File` button in DrawerView to fix errors.
 
@@ -101,6 +105,10 @@ Colorful Monorepo categorizes the files in each Workspace and displays them in a
 ```
 
 To improve the performance, the drawer will show all directories, even if it is not in `files.exclude`.
+
+## License
+
+Colorful Monorepo is available under the [AGPL license](https://github.com/deskbtm/colorful-monorepo/blob/main/LICENSE).
 
 ## Credits
 

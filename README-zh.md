@@ -1,5 +1,9 @@
 # Colorful Monorepo
 
+ <a href="https://github.com/deskbtm/colorful-monorepo/issues">
+      <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat" alt="chat on Discord">
+</a>
+
 这个插件不是免费的，请看 [价格](#价格)。当然这是自愿的。
 
 `Colorful Monorepo` 可以在一定程度上帮助你提高 Monorepo 项目的开发效率。
@@ -9,7 +13,7 @@
 ### Workspace
 
 支持 `npm`,`yarn`, `pnpm`, `lerna`, `rush`。
-![png1](./assets/Peek%202022-05-03%2021-16.gif)
+![png1](./assets/1.gif)
 当然也可以右击`Monorepo: As Workspace`手动添加，不包含`package.json`的文件夹。
 
 ### Drawer
@@ -18,15 +22,15 @@
 
 你可以通过`Monorepo: Move to drawer(Glob)`将文件添加到 Drawer，支持多选。这里要注意下，添加的文件会会对项目中所有同名文件生效。
 
-在Drawer中通过`Move out`将文件移出，同样支持多选。
+在 Drawer 中通过`Move out`将文件移出，同样支持多选。
 
-<img width="300" src="./assets/Peek 2022-05-15 18-07.gif"/>
+<img width="300" src="./assets/2.gif"/>
 
 **注意 出于对性能的考虑 drawer 中会显示所有的文件夹**
 
 在初次打开的项目中本插件会提示你添加默认隐藏的文件。
 
-<img width="300" src="./assets/Screenshot%20from%202022-05-15%2017-35-25.png"/>
+<img width="300" src="./assets/3.png"/>
 
 如果遇到问题可以点击 Drawer 视图右上角的编辑 Workspace File 按钮, 手动修复。
 
@@ -98,9 +102,11 @@ Colorful Monorepo 会将每个 Workspace 的文件归类， 并在底部的状�
 
 ```
 
-## Credits
+## License
 
 Colorful Monorepo is available under the [AGPL license](https://github.com/deskbtm/colorful-monorepo/blob/main/LICENSE).
+
+## Credits
 
 https://github.com/microsoft/workspace-tools MIT license
 
