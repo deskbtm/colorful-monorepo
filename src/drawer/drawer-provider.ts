@@ -34,7 +34,6 @@ import {
   toggleExclude,
 } from "./actions";
 import { PackageInfo } from "@deskbtm/workspace-tools";
-import glob from "fast-glob";
 
 type DrawerItem = WorkspaceItem | FileItem | TextItem;
 
@@ -68,7 +67,7 @@ export class DrawerProvider
     const move2DrawerByGlob = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.move2",
       async (_, items) => {
-        move2DrawerGlobHandler(items);
+        await move2DrawerGlobHandler(items);
         this.refresh();
       }
     );
@@ -93,16 +92,17 @@ export class DrawerProvider
 
     const moveOutCmd = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
-      async (item) => {
-        await moveOut(item);
+      async (_: any, items: FileItem[]) => {
+        console.log(items);
+        await moveOut(items);
         this.refresh();
       }
     );
 
     const moveOutAllCmd = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.moveOutAll",
-      async (item) => {
-        await moveOut(item, true);
+      async (_: any, items: FileItem[]) => {
+        await moveOut(items, true);
         this.refresh();
       }
     );

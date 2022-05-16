@@ -49,11 +49,11 @@
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.workspace.asWorkspace",
-				"title": "As Workspace"
+				"title": "Monorepo: As Workspace"
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.workspace.removeWorkspace",
-				"title": "Remove Workspace"
+				"title": "Monorepo: Remove Workspace"
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.refresh",
@@ -272,7 +272,7 @@
 						"**/pnpm-lock.yaml": true,
 						"**/package-lock.json": true
 					},
-					"description": "Workspace is initialized"
+					"description": "Default exclude files"
 				}
 			}
 		}

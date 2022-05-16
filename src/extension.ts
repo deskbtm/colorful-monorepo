@@ -72,6 +72,7 @@ export async function activate(context: ExtensionContext) {
 
   const drawerView = window.createTreeView("drawer", {
     treeDataProvider: drawerProvider,
+    canSelectMany: true,
   });
 
   const selectPackages = commands.registerCommand(

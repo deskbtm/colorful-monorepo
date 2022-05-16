@@ -6,5 +6,14 @@
     },
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
     "typescript.tsc.autoDetect": "off",
-    "ColorfulMonorepo.drawer.init": true
+    "ColorfulMonorepo.drawer.init": true,
+    "ColorfulMonorepo.workspaces.collection": [
+        {
+            "path": "/home/nawbc/Workspace/colorful-monorepo",
+            "packageName": "colorful-monorepo",
+            "label": "🌱  colorful-monorepo",
+            "foreground": "#ffffff",
+            "background": "#5182e8"
+        }
+    ]
 }
