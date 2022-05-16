@@ -92,9 +92,8 @@ export class DrawerProvider
 
     const moveOutCmd = commands.registerCommand(
       "com.deskbtm.ColorfulMonorepo.drawer.moveOut",
-      async (_: any, items: FileItem[]) => {
-        console.log(items);
-        await moveOut(items);
+      async (item: FileItem, items: FileItem[]) => {
+        await moveOut(items ?? [item]);
         this.refresh();
       }
     );
