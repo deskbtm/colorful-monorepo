@@ -8,7 +8,7 @@
       <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat" alt="chat on Discord">
 </a>
 
-This extension is not free. See [pricing](#pricing). Off cause, it's optional.
+This extension is not free. See [pricing](#pricing). Off cause, it's optional. Inspired by [monorepo-workspace](https://marketplace.visualstudio.com/items?itemName=folke.vscode-monorepo-workspace)
 
 `Colorful Monorepo` can help you to improve the development efficiency of your Monorepo project to some extent.
 
@@ -114,13 +114,17 @@ Colorful Monorepo is available under the [AGPL license](https://github.com/deskb
 
 https://github.com/microsoft/workspace-tools MIT license
 
-### What's Next
+## What's Next
 
 Auto arrange.
 
 ## Pricing
 
 If you have a wonderful experience, don't forgot to buy me a coffee.
+
+## My other extensions
+
+[android-adb-wlan](https://marketplace.visualstudio.com/items?itemName=HanWang.android-adb-wlan)
 
 **Enjoy !** 🖖
 

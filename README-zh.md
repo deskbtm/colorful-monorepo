@@ -118,6 +118,10 @@ https://github.com/microsoft/workspace-tools MIT license
 
 如果你获得了一个良好的体验请支付 3 ￥, 本插件会持续迭代。
 
+## My other extensions
+
+[android-adb-wlan](https://marketplace.visualstudio.com/items?itemName=HanWang.android-adb-wlan)
+
 **Enjoy !** 🖖
 
 <div>

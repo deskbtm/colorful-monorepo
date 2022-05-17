@@ -67,6 +67,16 @@ const folder2ModuleItem = function (
   return pkg!;
 };
 
+const getCollectionMap = function () {
+  const config = getExtensionConfig("ColorfulMonorepo.workspaces");
+  const m = new Map<string, CollectionItem>();
+  let collection = config.get<CollectionItem[]>("collection") ?? [];
+  for (const c of collection) {
+    m.set(c.path, c);
+  }
+  return m;
+};
+
 const collection2Modules = function (
   collection: CollectionItem[],
   pkgMap?: Map<string, ModuleItem>
@@ -128,6 +138,11 @@ const push2DurableCollection = function (
   collection: CollectionItem[]
 ) {
   let { foreground, background } = randomColorPair();
+  const collectionMap = getCollectionMap();
+  const existed = collectionMap.get(p.path);
+
+  foreground = existed?.foreground ?? foreground;
+  background = existed?.background ?? background;
 
   collection.push({
     path: p.path,
@@ -232,7 +247,7 @@ export const folderAsWorkspace = async function (_: any, items: Uri[]) {
   let m: ModuleItem[] = [];
 
   const config = getExtensionConfig("ColorfulMonorepo.workspaces");
-  let collection = (config.get("collection") as CollectionItem[]) ?? [];
+  let collection = config.get<CollectionItem[]>("collection") ?? [];
 
   for await (let item of items) {
     const stat = await workspace.fs.stat(item);
@@ -259,7 +274,7 @@ export const folderAsWorkspace = async function (_: any, items: Uri[]) {
 export const removeWorkspace = async function (_: any, items: Uri[]) {
   const { packagesMap } = getAllPackages();
   const config = getExtensionConfig("ColorfulMonorepo.workspaces");
-  let collection = (config.get("collection") as CollectionItem[]) ?? [];
+  let collection = config.get<CollectionItem[]>("collection") ?? [];
   const modules = collection2Modules(collection, packagesMap);
 
   for (const item of items) {

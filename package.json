@@ -4,7 +4,7 @@
 	"description": "A super amazing monorepo helper",
 	"version": "0.0.2-alpha.3",
 	"license": "AGPL-3.0",
-	"publisher": "WangHan",
+	"publisher": "deskbtm",
 	"private": true,
 	"author": {
 		"email": "deskbtm@outlook.com",
