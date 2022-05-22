@@ -38,7 +38,7 @@ import { PackageInfo } from "@deskbtm/workspace-tools";
 type DrawerItem = WorkspaceItem | FileItem | TextItem;
 
 export class DrawerProvider
-  extends EventEmitter<DrawerItem[] | undefined>
+  extends EventEmitter<DrawerItem | undefined>
   implements TreeDataProvider<DrawerItem>, Disposable
 {
   #watchers = new Map<string, FileSystemWatcher>();
