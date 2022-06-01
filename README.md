@@ -30,7 +30,7 @@ You can add files to the Drawer with `Monorepo: Move to drawer(Glob)`, which sup
 
 **For performance reasons, all folders are displayed in the drawer**
 
-Prompt you to add the default hidden files in first time.
+`ctrl+p` + `Monorepo: preset` to set default exclude.
 
 <img width="300" src="./assets/3.png"/>
 
