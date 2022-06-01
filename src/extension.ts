@@ -33,6 +33,7 @@ import {
   selectWorkspacePackages,
   folderAsWorkspace,
   syncFolders2Durable,
+  isSavedWorkspace,
 } from "./javascript/workspace";
 import { createAutoArrange } from "./arrange";
 
@@ -47,8 +48,8 @@ export async function activate(context: ExtensionContext) {
     return;
   }
 
-  // 同步folders和ColorfulMonorepo.workspaces.collection
-  await syncFolders2Durable();
+  // If not save workspace , Sync folders with ColorfulMonorepo.workspaces.collection.
+  isSavedWorkspace() && (await syncFolders2Durable());
 
   commands.executeCommand("setContext", "explorerExclude:enabled", true);
 

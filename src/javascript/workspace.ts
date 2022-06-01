@@ -38,8 +38,8 @@ interface GetAllPackagesOptions {
   includeRoot?: boolean;
 }
 
-export const isSingleWorkspaceProject = function () {
-  return !workspace.workspaceFile;
+export const isSavedWorkspace = function () {
+  return !!workspace.workspaceFile && !!workspace.workspaceFile.fsPath;
 };
 
 const folder2ModuleItem = function (
@@ -180,20 +180,19 @@ export const updateWorkspace = async function (packages: ModuleItem[] = []) {
     push2DurableCollection(p, collection);
   }
 
-  // due to DrawerProvider will refresh TreeView before config update,
-  // So need to update first.
-  await config.update("collection", collection, ConfigurationTarget.Workspace);
+  const a = isSavedWorkspace();
 
-  if (isSingleWorkspaceProject()) {
+  if (isSavedWorkspace()) {
+    // Due to DrawerProvider will refresh TreeView before config update,
+    // So need to update first.
+    await config.update(
+      "collection",
+      collection,
+      ConfigurationTarget.Workspace
+    );
     await getExtensionConfig("files").update(
       "exclude",
       {},
-      ConfigurationTarget.Workspace
-    );
-
-    await getExtensionConfig("ColorfulMonorepo.drawer").update(
-      "init",
-      false,
       ConfigurationTarget.Workspace
     );
   }

@@ -113,6 +113,11 @@ export class DrawerProvider
       }
     );
 
+    const presetExclude = commands.registerCommand(
+      "com.deskbtm.ColorfulMonorepo.drawer.preset",
+      this.#presetExclude
+    );
+
     workspace.workspaceFolders?.forEach((folder) => {
       this.#add2WatchFs(folder.uri);
     });
@@ -138,10 +143,9 @@ export class DrawerProvider
       move2DrawerByGlob,
       workspaceListener,
       moveOutAllCmd,
-      editWorkspaceFile
+      editWorkspaceFile,
+      presetExclude
     );
-
-    this.#initDefaultConfiguration();
   }
 
   override dispose(): void {
@@ -157,31 +161,28 @@ export class DrawerProvider
     this.fire(undefined);
   }
 
-  async #initDefaultConfiguration() {
+  #presetExclude = async () => {
     const fileConfig = workspace.getConfiguration("files");
     const drawerConfig = getExtensionConfig("ColorfulMonorepo.drawer");
 
-    if (!drawerConfig.get("init")) {
-      const excludeConfigs: Record<string, boolean> | undefined =
-        drawerConfig.get("exclude");
-      await drawerConfig.update("init", true, ConfigurationTarget.Workspace);
+    const excludeConfigs: Record<string, boolean> | undefined =
+      drawerConfig.get("exclude");
 
-      const val = await window.showInformationMessage(
-        `Monorepo: Init the default file excludes ? \n
-        ${Object.keys(excludeConfigs!).join("\n")}
-        `,
-        ConfirmActions.YES as string,
-        ConfirmActions.NO as string
-      );
+    const val = await window.showInformationMessage(
+      `Monorepo: Init the default file excludes ? \n
+      ${Object.keys(excludeConfigs!).join("\n")}
+      `,
+      ConfirmActions.YES as string,
+      ConfirmActions.NO as string
+    );
 
-      await fileConfig.update(
-        "exclude",
-        val === ConfirmActions.YES ? excludeConfigs : {},
-        ConfigurationTarget.Workspace
-      );
-      this.refresh();
-    }
-  }
+    await fileConfig.update(
+      "exclude",
+      val === ConfirmActions.YES ? excludeConfigs : {},
+      ConfigurationTarget.Workspace
+    );
+    this.refresh();
+  };
 
   #add2WatchFs(uri: Uri) {
     const watcher = workspace.createFileSystemWatcher(

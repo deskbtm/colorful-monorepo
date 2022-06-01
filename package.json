@@ -95,6 +95,10 @@
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.delete",
 				"title": "Delete file(trash)"
+			},
+			{
+				"command": "com.deskbtm.ColorfulMonorepo.drawer.preset",
+				"title": "Monorepo: preset"
 			}
 		],
 		"menus": {
@@ -229,11 +233,6 @@
 					"description": "Enable auto arrange the editor by workspace"
 				},
 				"ColorfulMonorepo.arrange.init": {
-					"type": "boolean",
-					"default": false,
-					"description": "Workspace is initialized"
-				},
-				"ColorfulMonorepo.drawer.init": {
 					"type": "boolean",
 					"default": false,
 					"description": "Workspace is initialized"
