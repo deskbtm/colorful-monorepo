@@ -8,6 +8,12 @@ import debounce from "lodash.debounce";
 
 export const colorizeHandler = window.onDidChangeActiveTextEditor(
   debounce(async (event) => {
+    const colorizeConfig = getExtensionConfig("ColorfulMonorepo.colorize");
+    if (!colorizeConfig.get<boolean>("enabled")) {
+      colorizeHandler.dispose();
+      return;
+    }
+
     if (!event || (workspace.workspaceFolders?.length ?? 0) < 2) {
       return;
     }

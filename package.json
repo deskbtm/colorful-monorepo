@@ -2,7 +2,7 @@
 	"name": "colorful-monorepo",
 	"displayName": "Colorful Monorepo - javascript, typescript, npm, yarn, pnpm, rush, nodejs",
 	"description": "A super amazing monorepo helper",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"license": "AGPL-3.0",
 	"preview": true,
 	"publisher": "deskbtm",
@@ -224,8 +224,8 @@
 				},
 				"ColorfulMonorepo.colorize.enabled": {
 					"type": "boolean",
-					"default": true,
-					"description": "The files dose not change frequently will move to Drawer"
+					"default": false,
+					"description": "Colorizing status bar when switch between different workspace."
 				},
 				"ColorfulMonorepo.arrange.enabled": {
 					"type": "boolean",
