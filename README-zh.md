@@ -4,10 +4,6 @@
       <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat" alt="chat on Discord">
 </a>
 
-这个插件不是免费的，请看 [价格](#价格)。当然这是自愿的。
-
-`Colorful Monorepo` 可以在一定程度上帮助你提高 Monorepo 项目的开发效率。
-
 ## 使用
 
 ### Workspace
@@ -113,10 +109,6 @@ https://github.com/microsoft/workspace-tools MIT license
 ## 下一步
 
 自动编排窗口功能。
-
-## 价格
-
-如果你获得了一个良好的体验请支付 3 ￥, 本插件会持续迭代。
 
 ## My other extensions
 
