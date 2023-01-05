@@ -8,10 +8,6 @@
       <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat" alt="chat on Discord">
 </a>
 
-This extension is not free. See [pricing](#pricing). Off cause, it's optional. Inspired by [monorepo-workspace](https://marketplace.visualstudio.com/items?itemName=folke.vscode-monorepo-workspace)
-
-`Colorful Monorepo` can help you to improve the development efficiency of your Monorepo project to some extent.
-
 ## Usage
 
 ### Workspace
