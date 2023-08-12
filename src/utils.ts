@@ -229,3 +229,7 @@ export const clearAllConfiguration = async function () {
     .getConfiguration("files")
     .update("exclude", {}, ConfigurationTarget.Workspace);
 };
+
+export const matchWorkspace = function () {
+  return (workspace.workspaceFolders?.length ?? 0) > 1;
+};

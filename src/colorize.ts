@@ -1,6 +1,6 @@
 import { workspace } from "vscode";
 /* eslint-disable @typescript-eslint/naming-convention */
-import { isWithin } from "./utils";
+import { isWithin, matchWorkspace } from "./utils";
 import { window, ConfigurationTarget } from "vscode";
 import { getExtensionConfig } from "./utils";
 import { CollectionItem } from "./interface";
@@ -9,12 +9,13 @@ import debounce from "lodash.debounce";
 export const colorizeHandler = window.onDidChangeActiveTextEditor(
   debounce(async (event) => {
     const colorizeConfig = getExtensionConfig("ColorfulMonorepo.colorize");
+    // Dynamic config
     if (!colorizeConfig.get<boolean>("enabled")) {
       colorizeHandler.dispose();
       return;
     }
 
-    if (!event || (workspace.workspaceFolders?.length ?? 0) < 2) {
+    if (!event || !matchWorkspace()) {
       return;
     }
 
@@ -28,7 +29,7 @@ export const colorizeHandler = window.onDidChangeActiveTextEditor(
     }
 
     const currentColorCustomization: Record<string, any> =
-      workbenchConfig.get("colorCustomizations") || {};
+      workbenchConfig.get("colorCustomizations") ?? {};
 
     let w: CollectionItem | undefined;
 

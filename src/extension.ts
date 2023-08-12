@@ -18,13 +18,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { disposeAll } from "./utils";
-import {
-  commands,
-  ConfigurationTarget,
-  Disposable,
-  ExtensionContext,
-  window,
-} from "vscode";
+import { commands, Disposable, ExtensionContext, window } from "vscode";
 import { DrawerProvider } from "./drawer/drawer-provider";
 import { colorizeHandler } from "./colorize";
 import { getExtensionConfig, getExtensionCwd } from "./utils";
@@ -33,7 +27,7 @@ import {
   selectWorkspacePackages,
   folderAsWorkspace,
   syncFolders2Durable,
-  isSavedWorkspace,
+  savedWorkspace,
 } from "./javascript/workspace";
 import { createAutoArrange } from "./arrange";
 
@@ -48,25 +42,17 @@ export async function activate(context: ExtensionContext) {
     return;
   }
 
-  // If not save workspace , Sync folders with ColorfulMonorepo.workspaces.collection.
-  isSavedWorkspace() && (await syncFolders2Durable());
+  // If there are no saved workspaces, sync folders with ColorfulMonorepo.workspaces.collection.
+  savedWorkspace() && (await syncFolders2Durable());
 
   commands.executeCommand("setContext", "explorerExclude:enabled", true);
 
   const colorizeConfig = getExtensionConfig("ColorfulMonorepo.colorize");
   const arrangeConfig = getExtensionConfig("ColorfulMonorepo.arrange");
 
+  // If arrange is enabled, OpenEditors will be disabled
   if (arrangeConfig.get<boolean>("enabled")) {
-    // if arrange enabled OpenEditors will disable
     commands.executeCommand("workbench.explorer.openEditorsView.removeView");
-  }
-
-  if (!colorizeConfig.get<boolean>("enabled")) {
-    await getExtensionConfig("workbench").update(
-      "colorCustomizations",
-      {},
-      ConfigurationTarget.Workspace
-    );
   }
 
   const drawerProvider = new DrawerProvider(cwd);

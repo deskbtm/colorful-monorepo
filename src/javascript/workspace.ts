@@ -38,7 +38,7 @@ interface GetAllPackagesOptions {
   includeRoot?: boolean;
 }
 
-export const isSavedWorkspace = function () {
+export const savedWorkspace = function () {
   return !!workspace.workspaceFile && !!workspace.workspaceFile.fsPath;
 };
 
@@ -180,9 +180,7 @@ export const updateWorkspace = async function (packages: ModuleItem[] = []) {
     push2DurableCollection(p, collection);
   }
 
-  const a = isSavedWorkspace();
-
-  if (isSavedWorkspace()) {
+  if (savedWorkspace()) {
     // Due to DrawerProvider will refresh TreeView before config update,
     // So need to update first.
     await config.update(

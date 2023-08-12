@@ -224,7 +224,7 @@
 				},
 				"ColorfulMonorepo.colorize.enabled": {
 					"type": "boolean",
-					"default": false,
+					"default": true,
 					"description": "Colorizing status bar when switch between different workspace."
 				},
 				"ColorfulMonorepo.arrange.enabled": {
