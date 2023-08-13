@@ -1,7 +1,3 @@
-[中文](https://github.com/deskbtm/colorful-monorepo/blob/main/README-zh.md)
-
-<sup>Doc partially translated by deepl</sup>
-
 # Colorful Monorepo
 
  <a href="https://github.com/deskbtm/colorful-monorepo/issues">
