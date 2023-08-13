@@ -63,7 +63,7 @@
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.move2",
-				"title": "Monorepo: Move to drawer(Glob)"
+				"title": "Monorepo: Transfer to drawer (glob)"
 			},
 			{
 				"command": "com.deskbtm.ColorfulMonorepo.drawer.show",

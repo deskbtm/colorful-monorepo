@@ -5,22 +5,28 @@
 # Colorful Monorepo
 
  <a href="https://github.com/deskbtm/colorful-monorepo/issues">
-      <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat" alt="chat on Discord">
+      <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat">
 </a>
 
 ## Usage
 
 ### Workspace
 
-Support `npm`,`yarn`, `pnpm`, `lerna`, `rush`.
+Support `npm`, `yarn`, `pnpm`, `lerna`, `rush`.
 ![png1](./assets/1.gif)
-You can also add the folder manually that not includes `package.json` by `Monorepo: As Workspace`.
+You can also add the folder manually which does not include `package.json` by `Monorepo: As Workspace`.
+
+### Colorize
+
+Colorful Monorepo categorizes the files in each Workspace and displays different colors in the status bar.
+
+<img width="100%" src="./assets/3.gif"/>
 
 ### Drawer
 
-Drawer ensures a crisp presentation of the workbench in the case of multiple Workspaces or with a large number of configurations, allowing you to focus more on the development of business code.
+Drawer ensures a crisp presentation of the workbench in the case of multiple Workspaces or with a large number of configurations, allowing you to focus more on business code.
 
-You can add files to the Drawer with `Monorepo: Move to drawer(Glob)`, which supports multiple selections. Note that the added file will take effect on all files of the same name in the project.
+You can add files to the Drawer with `Monorepo: Transfer to drawer glob`, which supports multiple selections. Note that the added file will take effect on all files of the same name in the project.
 
 <img width="300" src="./assets/2.gif"/>
 
@@ -31,10 +37,6 @@ You can add files to the Drawer with `Monorepo: Move to drawer(Glob)`, which sup
 <img width="300" src="./assets/3.png"/>
 
 You can click the `Edit Workspace File` button in DrawerView to fix errors.
-
-### Colorize
-
-Colorful Monorepo categorizes the files in each Workspace and displays them in a different color in the status bar at the bottom.
 
 ### Configuration
 
@@ -52,7 +54,7 @@ Colorful Monorepo categorizes the files in each Workspace and displays them in a
 "ColorfulMonorepo.colorize.enabled": {
   "type": "boolean",
   "default": true,
-  "description": "The files dose not change frequently will move to Drawer"
+  "description": "The files dose not change frequently will transfer to drawer"
 },
 // Experiment
 "ColorfulMonorepo.arrange.enabled": {
@@ -125,7 +127,7 @@ If you have a wonderful experience, don't forgot to buy me a coffee.
 **Enjoy !** 🖖
 
 <div>
-<a href="https://www.buymeacoffee.com/Nawbc">
+<a href="https://www.buymeacoffee.com/deskbtm">
   <img src="https://s2.loli.net/2022/04/15/54EHkb2fCrBoFua.png" width="175"/>
 </a>
 <img width="170" src="https://s2.loli.net/2022/05/16/ikM3QeuOAWaP4dR.jpg">
