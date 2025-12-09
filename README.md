@@ -1,7 +1,7 @@
 # Colorful Monorepo
 
  <a href="https://github.com/deskbtm/colorful-monorepo/issues">
-      <img src="https://img.shields.io/bitbucket/issues/deskbtm/colorful-monorepo?style=flat">
+      <img src="https://img.shields.io/github/issues/deskbtm/colorful-monorepo">
 </a>
 
 ## Usage
