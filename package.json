@@ -2,7 +2,7 @@
 	"name": "colorful-monorepo",
 	"displayName": "Colorful Monorepo - javascript, typescript, npm, yarn, pnpm, rush, nodejs",
 	"description": "A super amazing monorepo helper",
-	"version": "0.0.8",
+	"version": "0.1.1",
 	"license": "AGPL-3.0",
 	"preview": true,
 	"publisher": "deskbtm",
@@ -310,7 +310,7 @@
 		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
-		"@deskbtm/workspace-tools": "link:./workspace-tools",
+		"@deskbtm/workspace-tools": "^0.18.5",
 		"lodash.debounce": "^4.0.8",
 		"minimatch": "^5.0.1"
 	}
