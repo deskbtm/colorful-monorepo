@@ -126,5 +126,5 @@ If you have a wonderful experience, don't forgot to buy me a coffee.
 <a href="https://www.buymeacoffee.com/deskbtm">
   <img src="https://s2.loli.net/2022/04/15/54EHkb2fCrBoFua.png" width="175"/>
 </a>
-<img width="170" src="https://s2.loli.net/2022/05/16/ikM3QeuOAWaP4dR.jpg">
+<img width="100" src="https://s2.loli.net/2025/12/09/HK4o3nAqEmVlWih.jpg">
 </div>
